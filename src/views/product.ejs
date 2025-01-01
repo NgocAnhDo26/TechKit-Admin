@@ -1,0 +1,90 @@
+<!-- Products Management Section -->
+<section id="products">
+    <h2 class="mb-4 text-2xl font-bold">Products Management</h2>
+    <button
+        onclick="showModal('addProductModal')"
+        class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
+    >
+        Add New Product
+    </button>
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="border-b py-2 px-4">ID</th>
+                <th class="border-b py-2 px-4">Name</th>
+                <th class="border-b py-2 px-4">Price</th>
+                <th class="border-b py-2 px-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Product rows will be dynamically added here -->
+        </tbody>
+    </table>
+</section>
+
+<script>
+    // Show/hide modals
+    function showModal(modalId) {
+        document.getElementById(modalId).classList.remove("hidden");
+    }
+
+    function hideModal(modalId) {
+        document.getElementById(modalId).classList.add("hidden");
+    }
+
+    // Use this for AJAX rendering
+    function renderProducts() {
+        const tableBody = document.getElementById("productTableBody");
+        tableBody.innerHTML = "";
+        products.forEach((product) => {
+            const row = `
+                    <tr>
+                        <td class="py-2 px-4 border-b">${product.id}</td>
+                        <td class="py-2 px-4 border-b">${product.name}</td>
+                        <td class="py-2 px-4 border-b">$${product.price.toFixed(
+                            2
+                        )}</td>
+                        <td class="py-2 px-4 border-b">
+                            <button onclick="editProduct(${
+                                product.id
+                            })" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                            <button onclick="deleteProduct(${
+                                product.id
+                            })" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function addProduct(event) {
+        event.preventDefault();
+        const name = document.getElementById("productName").value;
+        const price = parseFloat(document.getElementById("productPrice").value);
+        const newProduct = {
+            id: products.length + 1,
+            name: name,
+            price: price,
+        };
+        products.push(newProduct);
+        renderProducts();
+        hideModal("addProductModal");
+        event.target.reset();
+    }
+
+    function editProduct(id) {
+        // Implement edit functionality
+        console.log("Edit product", id);
+    }
+
+    function deleteProduct(id) {
+        products = products.filter((product) => product.id !== id);
+        renderProducts();
+    }
+
+    // Event listeners
+    document
+        .getElementById("addProductForm")
+        .addEventListener("submit", addProduct);
+</script>

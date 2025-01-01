@@ -1,0 +1,32 @@
+{
+    "name": "techkit-admin",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js",
+        "postinstall": "prisma generate",
+        "updatedb": "prisma db pull && npx prisma db push",
+        "build": "npx tailwindcss -i public/stylesheets/tailwind.css -o public/stylesheets/styles.css --minify",
+        "devstart": "nodemon --inspect app.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "dotenv": "^16.4.7",
+        "ejs": "^3.1.10",
+        "express": "^4.21.2",
+        "passport": "^0.7.0",
+        "passport-local": "^1.0.0",
+        "tailwindcss": "^3.4.17"
+    },
+    "devDependencies": {
+        "morgan": "^1.10.0",
+        "nodemon": "^3.1.9",
+        "prisma": "^6.1.0"
+    }
+}

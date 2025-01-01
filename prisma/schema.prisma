@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model category {
+  id       Int       @id @default(autoincrement()) @db.TinyInt
+  name     String    @unique(map: "name") @db.VarChar(50)
+  products product[]
+}
+
+model product {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "name") @db.VarChar(70)
+  category_id    Int              @db.TinyInt
+  brand          String           @db.VarChar(70)
+  storage        String           @db.VarChar(10)
+  cpu            String           @db.VarChar(30)
+  screen_size    String           @db.VarChar(20)
+  resolution     String           @db.VarChar(50)
+  ram            String           @db.VarChar(10)
+  graphic_card   String?          @db.VarChar(50)
+  description    String?          @db.Text
+  price          Int              @default(25990000)
+  price_sale     Int?             @default(19990000)
+  in_stock       Int              @default(1)
+  sales          Int              @default(1)
+  create_time    DateTime         @default(now()) @db.Timestamp(0)
+  cart           cart[]
+  order_product  order_product[]
+  category       category         @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category")
+  product_image  product_image[]
+  product_review product_review[]
+
+  @@index([category_id], map: "idx_category")
+}
+
+model account {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(70)
+  email          String           @unique(map: "email") @db.VarChar(254)
+  password       String           @db.VarChar(72)
+  address        String?          @db.VarChar(100)
+  birthdate      DateTime?        @db.DateTime(0)
+  sex            String?          @db.VarChar(50)
+  avatar         String           @default("avatar/default") @db.VarChar(100)
+  create_time    DateTime         @default(now()) @db.Timestamp(0)
+  is_lock        Boolean          @default(false)
+  is_admin       Boolean          @default(false)
+  cart           cart?
+  orders         orders[]
+  product_review product_review[]
+}
+
+model cart {
+  account_id Int     @unique(map: "account_id")
+  product_id Int
+  quantity   Int
+  account    account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_ibfk_1")
+  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_ibfk_2")
+
+  @@id([account_id, product_id])
+  @@index([product_id], map: "product_id")
+}
+
+model order_product {
+  order_id   Int
+  product_id Int
+  quantity   Int
+  orders     orders  @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_1")
+  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_2")
+
+  @@id([order_id, product_id])
+  @@index([product_id], map: "product_id")
+}
+
+model orders {
+  id               Int             @id @default(autoincrement())
+  account_id       Int
+  shipping_address String?         @db.VarChar(100)
+  create_time      DateTime        @default(now()) @db.Timestamp(0)
+  status           String          @db.VarChar(20)
+  order_product    order_product[]
+  account          account         @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
+
+  @@index([account_id], map: "account_id")
+}
+
+model product_image {
+  product_id     Int
+  url            String  @db.VarChar(100)
+  is_profile_img Boolean @default(false)
+  product        product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_image_ibfk_1")
+
+  @@id([product_id, url])
+}
+
+model product_review {
+  product_id  Int
+  account_id  Int
+  create_time DateTime @default(now()) @db.Timestamp(0)
+  content     String   @db.Text
+  product     product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_review_ibfk_1")
+  account     account  @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_review_ibfk_2")
+
+  @@id([product_id, account_id, create_time])
+  @@index([account_id], map: "account_id")
+}
+

@@ -1,0 +1,186 @@
+<!-- Account Management Section -->
+<section id="account">
+    <h2 class="mb-4 text-2xl font-bold">Account Management</h2>
+    <button
+        onclick="showModal('addAccountModal')"
+        class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
+    >
+        Add New Account
+    </button>
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="border-b py-2 px-4">ID</th>
+                <th class="border-b py-2 px-4">Username</th>
+                <th class="border-b py-2 px-4">Email</th>
+                <th class="border-b py-2 px-4">Role</th>
+                <th class="border-b py-2 px-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="accountTableBody">
+            <!-- Account rows will be dynamically added here -->
+        </tbody>
+    </table>
+</section>
+
+<!-- Add Account Modal -->
+<div
+    id="addAccountModal"
+    class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
+>
+    <div
+        class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
+    >
+        <h3 class="mb-4 text-lg font-bold">Add New Account</h3>
+        <form id="addAccountForm">
+            <div class="mb-4">
+                <label
+                    class="mb-2 block text-sm font-bold text-gray-700"
+                    for="accountUsername"
+                >
+                    Username
+                </label>
+                <input
+                    class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                    id="accountUsername"
+                    type="text"
+                    placeholder="Username"
+                    required
+                />
+            </div>
+            <div class="mb-4">
+                <label
+                    class="mb-2 block text-sm font-bold text-gray-700"
+                    for="accountEmail"
+                >
+                    Email
+                </label>
+                <input
+                    class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                    id="accountEmail"
+                    type="email"
+                    placeholder="Email"
+                    required
+                />
+            </div>
+            <div class="mb-4">
+                <label
+                    class="mb-2 block text-sm font-bold text-gray-700"
+                    for="accountRole"
+                >
+                    Role
+                </label>
+                <select
+                    class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                    id="accountRole"
+                    required
+                >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-between">
+                <button
+                    class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                    type="submit"
+                >
+                    Add Account
+                </button>
+                <button
+                    class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+                    type="button"
+                    onclick="hideModal('addAccountModal')"
+                >
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Use this for AJAX requests
+    function renderAccounts() {
+        const tableBody = document.getElementById("accountTableBody");
+        tableBody.innerHTML = "";
+        accounts.forEach((account) => {
+            const row = `
+                    <tr>
+                        <td class="py-2 px-4 border-b">${account.id}</td>
+                        <td class="py-2 px-4 border-b">${account.username}</td>
+                        <td class="py-2 px-4 border-b">${account.email}</td>
+                        <td class="py-2 px-4 border-b">${account.role}</td>
+                        <td class="py-2 px-4 border-b">
+                            <button onclick="editAccount(${account.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                            <button onclick="deleteAccount(${account.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
+                            <button onclick="toggleBanAccount(${account.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Ban</button>
+                        </td>
+                    </tr>
+                `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Show/hide modals
+    function showModal(modalId) {
+        document.getElementById(modalId).classList.remove("hidden");
+    }
+
+    function hideModal(modalId) {
+        document.getElementById(modalId).classList.add("hidden");
+    }
+
+    // Account management
+    let accounts = [
+        {
+            id: 1,
+            username: "john_doe",
+            email: "john@example.com",
+            role: "admin",
+        },
+        {
+            id: 2,
+            username: "jane_smith",
+            email: "jane@example.com",
+            role: "user",
+        },
+    ];
+
+    function addAccount(event) {
+        event.preventDefault();
+        const username = document.getElementById("accountUsername").value;
+        const email = document.getElementById("accountEmail").value;
+        const role = document.getElementById("accountRole").value;
+        const newAccount = {
+            id: accounts.length + 1,
+            username: username,
+            email: email,
+            role: role,
+        };
+        accounts.push(newAccount);
+        renderAccounts();
+        hideModal("addAccountModal");
+        event.target.reset();
+    }
+
+    function editAccount(id) {
+        // Implement edit functionality
+        console.log("Edit account", id);
+    }
+
+    function deleteAccount(id) {
+        accounts = accounts.filter((account) => account.id !== id);
+        renderAccounts();
+    }
+
+    // ban/unban account
+    function toggleBanAccount(id) {
+        accounts = accounts.filter((account) => account.id !== id);
+        renderAccounts();
+    }
+
+    // Add event listener for the account form
+    document
+        .getElementById("addAccountForm")
+        .addEventListener("submit", addAccount);
+</script>

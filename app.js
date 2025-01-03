@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
 // app.use(express.urlencoded({ extended: false })); // Parse URL-encoded bodies
-// app.use(express.json()); // Parse JSON bodies
+app.use(express.json()); // Parse JSON bodies
 // app.use(cookieParser(JSON.parse(process.env.SECRET)));
 app.use(express.static(path.join(__dirname, 'public'))); // Use static files
 // app.use(
@@ -48,7 +48,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-const PORT = process.env.PORT ?? 1111; // Server setup
+const PORT = process.env.PORT ?? 2000; // Server setup
 
 const server = app.listen(PORT, () => {
     console.log(`TechKit starts at port http://localhost:${PORT}`);

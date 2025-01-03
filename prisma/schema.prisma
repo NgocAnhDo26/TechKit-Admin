@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,7 +16,7 @@ model category {
 model product {
   id             Int              @id @default(autoincrement())
   name           String           @unique(map: "name") @db.VarChar(70)
-  category_id    Int              @db.TinyInt
+  category_id    Int?             @db.TinyInt
   brand          String           @db.VarChar(70)
   storage        String           @db.VarChar(10)
   cpu            String           @db.VarChar(30)
@@ -38,7 +32,7 @@ model product {
   create_time    DateTime         @default(now()) @db.Timestamp(0)
   cart           cart[]
   order_product  order_product[]
-  category       category         @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category")
+  category       category?        @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_category")
   product_image  product_image[]
   product_review product_review[]
 
@@ -49,21 +43,22 @@ model account {
   id             Int              @id @default(autoincrement())
   name           String           @db.VarChar(70)
   email          String           @unique(map: "email") @db.VarChar(254)
-  password       String           @db.VarChar(72)
+  password       String?          @db.VarChar(72)
   address        String?          @db.VarChar(100)
   birthdate      DateTime?        @db.DateTime(0)
   sex            String?          @db.VarChar(50)
-  avatar         String           @default("avatar/default") @db.VarChar(100)
+  avatar         String           @default("TechKit/avatar/default") @db.VarChar(100)
   create_time    DateTime         @default(now()) @db.Timestamp(0)
   is_lock        Boolean          @default(false)
   is_admin       Boolean          @default(false)
-  cart           cart?
+  google_id      String?          @unique(map: "google_id") @db.VarChar(100)
+  cart           cart[]
   orders         orders[]
   product_review product_review[]
 }
 
 model cart {
-  account_id Int     @unique(map: "account_id")
+  account_id Int
   product_id Int
   quantity   Int
   account    account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_ibfk_1")
@@ -77,6 +72,7 @@ model order_product {
   order_id   Int
   product_id Int
   quantity   Int
+  price      Int
   orders     orders  @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_1")
   product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_2")
 
@@ -90,6 +86,11 @@ model orders {
   shipping_address String?         @db.VarChar(100)
   create_time      DateTime        @default(now()) @db.Timestamp(0)
   status           String          @db.VarChar(20)
+  customer_name    String?         @db.VarChar(50)
+  customer_phone   String?         @db.VarChar(12)
+  customer_email   String?         @db.VarChar(45)
+  payment_method   String?         @db.VarChar(20)
+  total_price      Int             @default(0)
   order_product    order_product[]
   account          account         @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
 
@@ -116,4 +117,3 @@ model product_review {
   @@id([product_id, account_id, create_time])
   @@index([account_id], map: "account_id")
 }
-

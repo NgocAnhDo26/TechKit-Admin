@@ -1,14 +1,31 @@
 import express from 'express';
+import * as accountService from '../components/account/accountService.js';
+import categoryController from '../components/category/categoryController.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('index', { section: 'account' });
+router.get('/', async (req, res) => {
+    try {
+        const result = await accountService.fetchAccountsByQuery(req.query);
+        res.render('index', { section: 'account', accounts: result });
+    } catch (error) {
+        console.error('Error fetching accounts:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-router.get('/account', (req, res) => {
-    res.render('index', { section: 'account' });
+
+router.get('/account',async (req, res) => {
+    try {
+        const result = await accountService.fetchAccountsByQuery(req.query);
+        res.render('index', { section: 'account', accounts: result });
+    } catch (error) {
+        console.error('Error fetching accounts:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+router.use('/category',categoryController);
 
 router.get('/product', (req, res) => {
     res.render('index', { section: 'product' });

@@ -4,6 +4,7 @@ async function fetchAccountsByQuery(query) {
     const {
         name,
         email,
+        isBanned, 
         sortBy,
         sortOrder,
         page = 1,
@@ -11,12 +12,14 @@ async function fetchAccountsByQuery(query) {
     } = query;
 
     try {
-        // Count total records with applied filters
         const totalRecords = await prisma.account.count({
             where: {
                 AND: [
-                    ...(name ? [{ name: { contains: name} }] : []),
-                    ...(email ? [{ email: { contains: email} }] : [])
+                    ...(name ? [{ name: { contains: name } }] : []),
+                    ...(email ? [{ email: { contains: email } }] : []),
+                    ...(isBanned !== undefined
+                        ? [{ is_lock: isBanned === 'true' }] // Filter based on is_lock
+                        : [])
                 ]
             }
         });
@@ -34,8 +37,11 @@ async function fetchAccountsByQuery(query) {
         const accounts = await prisma.account.findMany({
             where: {
                 AND: [
-                    ...(name ? [{ name: { contains: name} }] : []),
-                    ...(email ? [{ email: { contains: email} }] : [])
+                    ...(name ? [{ name: { contains: name } }] : []),
+                    ...(email ? [{ email: { contains: email } }] : []),
+                    ...(isBanned !== undefined
+                        ? [{ is_lock: isBanned === 'true' }] // Filter based on is_lock
+                        : [])
                 ]
             },
             orderBy: sortBy ? orderBy : undefined, // Dynamically apply sorting
@@ -49,7 +55,9 @@ async function fetchAccountsByQuery(query) {
                 address: true,
                 birthdate: true,
                 sex: true,
-                create_time: true
+                create_time: true,
+                is_admin: true,
+                is_lock: true // Include the is_lock field
             }
         });
 
@@ -84,7 +92,7 @@ async function banAccountByID(account_id) {
         // Update the account's status to banned (is_lock = 1)
         await prisma.account.update({
             where: { id: account_id },
-            update: {
+            data: {
                 is_lock: 1
             }
         });
@@ -95,7 +103,38 @@ async function banAccountByID(account_id) {
     }
 }
 
+async function unbanAccountByID(account_id) {
+    try {
+        // Check if the account exists and is not already banned
+        const account = await prisma.account.findUnique({
+            where: { id: account_id },
+            select: { id: true, is_lock: true }
+        });
+
+        if (!account) {
+            return { success: false, message: 'No account found' };
+        }
+
+        if (account.is_lock === 0) {
+            return { success: false, message: 'Account is not banned'};
+        }    
+
+        // Update the account's status to banned (is_lock = 1)
+        await prisma.account.update({
+            where: { id: account_id },
+            data: {
+                is_lock: 0
+            }
+        });
+        return { success: true,message: 'Account successfully unbanned' };
+    } catch (error) {
+        console.error('Error unbanning account:', error);
+        return { success: false, message: 'Internal server error'};
+    }
+}
+
 export {
     fetchAccountsByQuery,
     banAccountByID,
+    unbanAccountByID
 };

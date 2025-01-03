@@ -21,6 +21,23 @@ router.get('/', async (req, res) => {
     }
 });
 
+export async function renderCategoryPage(req, res) {
+    try {
+        const categories = await categoryService.fetchAllCategories();
+        res.status(200).json({
+            success: true,
+            message: 'Categories fetched successfully',
+            result: categories,
+        });
+    } catch (error) {
+        console.error('Error in GET /category:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to fetch categories',
+        });
+    }
+}
+
 // POST /category - Add a new category
 router.post('/', async (req, res) => {
     const { name } = req.body;

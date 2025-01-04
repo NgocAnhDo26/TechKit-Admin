@@ -19,17 +19,18 @@
           <% switch (section) { case 'account': %> <%- include('account') %> <%
           break; case 'product': %> <%- include('product') %> <% break; case
           'order': %> <%- include('order') %> <% break; case 'report': %> <%-
-          include('report') %> <% break; default: break; } %>
+          include('report') %> <% break; default: %> <%- include('error') %> <%
+          break;} %>
         </main>
       </div>
     </div>
 
     <script>
       function showModal(modalId) {
-        document.getElementById(modalId).classList.remove("hidden");
+        document.getElementById(modalId).classList.remove('hidden');
       }
       function hideModal(modalId) {
-        document.getElementById(modalId).classList.add("hidden");
+        document.getElementById(modalId).classList.add('hidden');
       }
     </script>
   </body>

@@ -43,8 +43,9 @@ app.use(router); // Init routes
 // Handing errors
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).render('error', {
-    message: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+  res.status(500).render('index', {
+    section: 'error',
+    message: 'Xin lỗi, có lỗi xảy ra',
     status: 500,
   });
 });

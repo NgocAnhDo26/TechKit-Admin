@@ -1,5 +1,6 @@
 import express from 'express';
 import * as accountService from './accountService.js';
+import { errorResponse } from '../util/util.js';
 
 const router = express.Router();
 
@@ -9,11 +10,7 @@ router.get('/', async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error('Error fetching accounts:', error);
-    res.status(500).render('index', {
-      section: 'error',
-      message: 'Xin lỗi, có lỗi xảy ra',
-      status: 500,
-    });
+    res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
   }
 });
 
@@ -23,11 +20,7 @@ export async function renderAccountPage(req, res) {
     res.status(200).render('index', { section: 'account', accounts: result });
   } catch (error) {
     console.error('Error fetching accounts:', error);
-    res.status(500).render('index', {
-      section: 'error',
-      message: 'Xin lỗi, có lỗi xảy ra',
-      status: 500,
-    });
+    res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
   }
 }
 

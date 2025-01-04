@@ -29,4 +29,32 @@ router.get('/', async (req, res) => {
     });
 });
 
+router.get('/:id', async (req, res) => {
+  productService
+    .fetchProductById(req.params.id)
+    .then((product) => {
+      res.json(product);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
+router.put('/:id', async (req, res) => {
+  productService
+    .updateProduct(parseInt(req.params.id, 10), req.body)
+    .then((result) => {
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).send(result);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
 export default router;

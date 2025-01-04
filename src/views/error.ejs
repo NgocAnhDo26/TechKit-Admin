@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TechKit - Lỗi</title>
+  </head>
+
+  <body class="text-gray-light">
+    <!-- Header -->
+    <%- include('header'); %>
+
+    <!-- Main content -->
+    <main class="min-h-screen flex flex-col items-center justify-center">
+      <h1 class="text-primary text-5xl mb-20"><%= status %></h1>
+      <h1 class="text-3xl font-bold mb-10">Oops! Đã có lỗi xảy ra</h1>
+      <p class="mb-4"><%= message %></p>
+      <a href="/" class="text-primary hover:underline">Quay trở về trang chủ</a>
+    </main>
+  </body>
+</html>

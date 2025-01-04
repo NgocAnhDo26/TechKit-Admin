@@ -1,34 +1,41 @@
 {
-    "name": "techkit-admin",
-    "version": "1.0.0",
-    "description": "",
-    "main": "app.js",
-    "type": "module",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node app.js",
-        "postinstall": "prisma generate",
-        "updatedb": "prisma db pull && npx prisma db push",
-        "build": "npx tailwindcss -i public/stylesheets/tailwind.css -o public/stylesheets/styles.css --minify",
-        "devstart": "nodemon --inspect app.js"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@prisma/client": "^6.1.0",
-        "bcrypt": "^5.1.1",
-        "cloudinary": "^2.5.1",
-        "dotenv": "^16.4.7",
-        "ejs": "^3.1.10",
-        "express": "^4.21.2",
-        "passport": "^0.7.0",
-        "passport-local": "^1.0.0",
-        "tailwindcss": "^3.4.17"
-    },
-    "devDependencies": {
-        "morgan": "^1.10.0",
-        "nodemon": "^3.1.9",
-        "prisma": "^6.1.0"
-    }
+  "name": "techkit-admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx tailwindcss -i public/stylesheets/tailwind.css -o public/stylesheets/styles.css --watch",
+    "build": "npx tailwindcss -i public/stylesheets/tailwind.css -o public/stylesheets/styles.css --minify",
+    "start": "node app.js",
+    "devstart": "nodemon --inspect app.js",
+    "postinstall": "prisma generate",
+    "updatePush": "prisma db push",
+    "updatePull": "prisma db pull",
+    "prisma_studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
+    "@prisma/client": "^6.1.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "connect-redis": "^8.0.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "nodemon": "^3.1.9",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-ejs": "^1.0.3",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "prisma": "^6.1.0",
+    "redis": "^4.7.0",
+    "tailwindcss": "^3.4.17"
+  }
 }

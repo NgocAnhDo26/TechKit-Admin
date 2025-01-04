@@ -8,7 +8,7 @@ datasource db {
 }
 
 model category {
-  id       Int       @id @default(autoincrement()) @db.TinyInt
+  id       Int       @id @default(autoincrement())
   name     String    @unique(map: "name") @db.VarChar(50)
   products product[]
 }
@@ -16,8 +16,8 @@ model category {
 model product {
   id             Int              @id @default(autoincrement())
   name           String           @unique(map: "name") @db.VarChar(70)
-  category_id    Int?             @db.TinyInt
-  brand          String           @db.VarChar(70)
+  brand_id       Int?
+  category_id    Int?
   storage        String           @db.VarChar(10)
   cpu            String           @db.VarChar(30)
   screen_size    String           @db.VarChar(20)
@@ -30,19 +30,23 @@ model product {
   in_stock       Int              @default(1)
   sales          Int              @default(1)
   create_time    DateTime         @default(now()) @db.Timestamp(0)
+  status         String           @default("on stock") @db.VarChar(20)
   cart           cart[]
   order_product  order_product[]
-  category       category?        @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "fk_category")
+  brand          brand?           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_brand")
+  category       category?        @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category")
   product_image  product_image[]
   product_review product_review[]
 
-  @@index([category_id], map: "idx_category")
+  @@index([category_id], map: "fk_product_category_idx")
+  @@index([brand_id], map: "idx_brand")
 }
 
 model account {
   id             Int              @id @default(autoincrement())
   name           String           @db.VarChar(70)
   email          String           @unique(map: "email") @db.VarChar(254)
+  phone          String?          @db.VarChar(12)
   password       String?          @db.VarChar(72)
   address        String?          @db.VarChar(100)
   birthdate      DateTime?        @db.DateTime(0)
@@ -61,11 +65,11 @@ model cart {
   account_id Int
   product_id Int
   quantity   Int
-  account    account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_ibfk_1")
-  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_ibfk_2")
+  account    account @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_1")
+  product    product @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_ibfk_2")
 
   @@id([account_id, product_id])
-  @@index([product_id], map: "product_id")
+  @@index([product_id], map: "cart_ibfk_2")
 }
 
 model order_product {
@@ -73,11 +77,11 @@ model order_product {
   product_id Int
   quantity   Int
   price      Int
-  orders     orders  @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_1")
-  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_product_ibfk_2")
+  orders     orders  @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_product_ibfk_1")
+  product    product @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_product_ibfk_2")
 
   @@id([order_id, product_id])
-  @@index([product_id], map: "product_id")
+  @@index([product_id], map: "order_product_ibfk_2")
 }
 
 model orders {
@@ -92,18 +96,18 @@ model orders {
   payment_method   String?         @db.VarChar(20)
   total_price      Int             @default(0)
   order_product    order_product[]
-  account          account         @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
+  account          account         @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "orders_ibfk_1")
 
-  @@index([account_id], map: "account_id")
+  @@index([account_id], map: "orders_ibfk_1")
 }
 
 model product_image {
   product_id     Int
-  url            String  @db.VarChar(100)
+  public_id      String  @db.VarChar(100)
   is_profile_img Boolean @default(false)
   product        product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_image_ibfk_1")
 
-  @@id([product_id, url])
+  @@id([product_id, public_id])
 }
 
 model product_review {
@@ -111,9 +115,15 @@ model product_review {
   account_id  Int
   create_time DateTime @default(now()) @db.Timestamp(0)
   content     String   @db.Text
-  product     product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_review_ibfk_1")
-  account     account  @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_review_ibfk_2")
+  product     product  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_review_ibfk_1")
+  account     account  @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_review_ibfk_2")
 
   @@id([product_id, account_id, create_time])
-  @@index([account_id], map: "account_id")
+  @@index([account_id], map: "product_review_ibfk_2")
+}
+
+model brand {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique(map: "name") @db.VarChar(50)
+  product product[]
 }

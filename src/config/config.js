@@ -1,18 +1,31 @@
 import { PrismaClient } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
+import { createClient } from 'redis';
 
 dotenv.config({ path: '.env' });
 
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Initialize client.
+const redisClient = createClient({
+  username: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+  },
+});
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
+await redisClient.connect();
+
 // Init database
-// Export const prisma = new PrismaClient({ log: ['query'] });
 export const prisma = new PrismaClient();
 
-export { cloudinary };
+export { cloudinary, redisClient };

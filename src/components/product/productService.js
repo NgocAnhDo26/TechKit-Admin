@@ -1,4 +1,5 @@
 import { prisma, cloudinary } from '../../config/config.js';
+import { getImage } from '../util/util.js';
 
 export async function createProduct(data, images) {
   const {
@@ -99,4 +100,101 @@ export async function createProduct(data, images) {
   );
 
   return { success: true };
+}
+
+// fetch all products
+export async function fetchProductWithQuery(query) {
+  let filters = {
+    AND: [],
+  };
+
+  // Pagination settings
+  let page = Number(query.page) || 1;
+  let limit = Number(query.limit) || 10;
+  let offset = (page - 1) * limit;
+
+  // Keyword search filters
+  if (query.keyword) {
+    filters.AND.push({ name: { contains: query.keyword } });
+  }
+
+  if (query.category) {
+    filters.AND.push({
+      category: {
+        name: query.category,
+      },
+    });
+  }
+
+  if (query.brand) {
+    filters.AND.push({ brand: { name: query.brand } });
+  }
+
+  // Prepare sorting
+  let orderBy = {};
+  if (query.order && query.sortBy) {
+    orderBy[query.sortBy] = query.order;
+  }
+
+  const products = await prisma.product.findMany({
+    where: filters,
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      price_sale: true,
+      create_time: true,
+      in_stock: true,
+      sales: true,
+      status: true,
+      product_image: {
+        select: { public_id: true, is_profile_img: true },
+      },
+      category: {
+        select: { name: true },
+      },
+      brand: {
+        select: { name: true },
+      }
+    },
+    orderBy: orderBy,
+  });
+
+  if (!products.length) {
+    return []; // Empty products
+  }
+
+  // Process products format
+  const formattedProducts = formatProducts(products);
+
+  // Compute total pages after filtering
+  const totalProducts = formattedProducts.length;
+  const totalPage = Math.ceil(totalProducts / limit);
+
+  return {
+    products: formattedProducts.slice(offset, offset + limit),
+    totalPage,
+    currentPage: page,
+  };
+}
+
+function formatProducts(products) {
+  return products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    price_sale: product.price_sale,
+    category: product.category.name,
+    brand: product.brand.name,
+    create_time: product.create_time,
+    in_stock: product.in_stock,
+    sales: product.sales,
+    status: product.status,
+    profile_img: getImage(
+      product.product_image.find((img) => img.is_profile_img).public_id,
+    ).url,
+    images: product.product_image
+      .filter((img) => !img.is_profile_img)
+      .map((img) => getImage(img.public_id).url),
+  }));
 }

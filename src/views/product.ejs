@@ -1,26 +1,135 @@
 <!-- Products Management Section -->
 <section id="products">
-  <h2 class="mb-4 text-2xl font-bold">Products Management</h2>
+  <h2 class="mb-4 text-2xl font-bold">Quản lý sản phẩm</h2>
   <button
     onclick="showModal('addProductModal')"
     class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
   >
-    Add New Product
+    Thêm sản phẩm mới
   </button>
+
+  <!-- Filter Form, including search by name, filter by category, brand and sort by -->
+  <form class="mb-4 text-sm">
+    <div class="flex gap-4 items-center">
+      <input
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+        type="text"
+        placeholder="Tìm kiếm theo tên"
+      />
+      <select
+        id="category"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+      >
+        <option value="default">Loại</option>
+        <% categories.forEach((category) => { %>
+          <option value="<%= category.name %>"><%= category.name %></option>
+        <% }); %>
+      </select>
+      <select
+        id="brand"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+      >
+        <option value="default">Thương hiệu</option>
+        <% brands.forEach((brand) => { %>
+          <option value="<%= brand.name %>"><%= brand.name %></option>
+        <% }); %>
+      </select>
+
+      <button type="button" id="filter-button" class="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none">
+        Lọc
+      </button>
+
+      <p class="flex-1 text-end">Sắp xếp: </p>
+      <select
+        id="sort"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+      >
+        <option value="default">Mặc định</option>
+        <option value="create_time-desc">Ngày tạo: Mới nhất</option>
+        <option value="create_time-asc">Ngày tạo: Cũ nhất</option>
+        <option value="price_sale-asc">Giá: tăng dần</option>
+        <option value="price_sale-desc">Giá: giảm dần</option>
+        <option value="sales-asc">Doanh số: tăng dần</option>
+        <option value="sales-desc">Doanh số: giảm dần</option>
+      </select>
+    </div>
+  </form>
+
+  <!-- Product Table -->
   <table class="min-w-full bg-white">
     <thead>
-      <tr>
-        <th class="border-b py-2 px-4">ID</th>
-        <th class="border-b py-2 px-4">Name</th>
-        <th class="border-b py-2 px-4">Price</th>
-        <th class="border-b py-2 px-4">Actions</th>
+      <tr class="text-sm">
+        <th class="border-b p-2 px-4">ID</th>
+        <th class="border-b p-2">Sản phẩm</th>
+        <th class="border-b p-2">Giá</th>
+        <th class="border-b p-2">Loại</th>
+        <th class="border-b p-2">Thương hiệu</th>
+        <th class="border-b p-2">Ngày tạo</th>
+        <th class="border-b p-2">Tồn kho</th>
+        <th class="border-b p-2">Tình trạng</th>
+        <th class="border-b p-2">Doanh số</th>
       </tr>
     </thead>
     <tbody id="productTableBody">
       <!-- Product rows will be dynamically added here -->
+      <% data.products.forEach((product) => { %>
+      <tr class="text-sm">
+        <td class="p-2 px-4 border-b text-center"><%= product.id %></td>
+        <td class="flex p-2 border-b items-center">
+          <img class="h-16 w-16 object-cover mr-2" src="<%= product.profile_img %>" alt="<%= product.name %>">
+          <p><%= product.name %></p>
+        </td>
+        <td class="p-2 border-b text-center">
+          <% if (product.price_sale === product.price) { %>
+            <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) %>
+          <% } else { %>
+            <span class="line-through text-gray-500"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) %></span>
+            <span class="text-red-500"><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price_sale) %></span>
+          <% } %>
+        </td>
+        <td class="p-2 border-b text-center"><%= product.category %></td>
+        <td class="p-2 border-b text-center"><%= product.brand %></td>
+        <td class="border-b text-center"><%= product.create_time.toLocaleString() %></td>
+        <td class="p-2 border-b text-center"><%= product.in_stock %></td>
+        <td class="p-2 border-b text-center">
+          <% if (product.status === 'on stock') { %>
+            <span class="text-green-500">Còn hàng</span>
+          <% } else if (product.status === 'out of stock') { %>
+            <span class="text-red-500">Hết hàng</span>
+          <% } else { %>
+            <span class="text-yellow-500">Ngừng kinh doanh</span>
+          <% } %>
+        </td>
+        <td class="p-2 border-b text-center"><%= product.sales %></td>
+      </tr>
+      <% }); %>
     </tbody>
   </table>
+
+  <!-- Product paging (include at most 5 numbers at once) -->
+  <div class="flex justify-center gap-2 mt-5 text-sm">
+    <button class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none">
+      1
+    </button>
+    <button class="rounded border border-blue-500 text-blue-500 py-2 px-4 hover:bg-blue-700 focus:outline-none">
+      2
+    </button>
+    <button class="rounded border border-blue-500 text-blue-500 py-2 px-4 hover:bg-blue-700 focus:outline-none">
+      3
+    </button>
+    <button class="rounded border border-blue-500 text-blue-500 py-2 px-4 hover:bg-blue-700 focus:outline-none">
+      4
+    </button>
+    <button class="rounded border border-blue-500 text-blue-500 py-2 px-4 hover:bg-blue-700 focus:outline-none">
+      5
+    </button>
+    <button class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none">
+      Trang sau
+    </button>
+  </div>
 </section>
+
+
 <!-- Add Product Modal -->
 <div
   id="addProductModal"
@@ -247,25 +356,33 @@
 </div>
 <script>
   // Use this for AJAX rendering
-  function renderProducts() {
+  function renderProducts(products) {
     const tableBody = document.getElementById('productTableBody');
     tableBody.innerHTML = '';
     products.forEach((product) => {
       const row = `
-                    <tr>
-                        <td class="py-2 px-4 border-b">${product.id}</td>
-                        <td class="py-2 px-4 border-b">${product.name}</td>
-                        <td class="py-2 px-4 border-b">$${product.price.toFixed(
-                          2,
-                        )}</td>
-                        <td class="py-2 px-4 border-b">
-                            <button onclick="editProduct(${
-                              product.id
-                            })" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
-                            <button onclick="deleteProduct(${
-                              product.id
-                            })" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
-                        </td>
+                    <tr class="text-sm">
+                      <td class="p-2 px-4 border-b text-center">${product.id}</td>
+                      <td class="flex p-2 border-b items-center">
+                        <img class="h-16 w-16 object-cover mr-2" src="${product.profile_img}" alt="${product.name}">
+                        <p>${product.name}</p>
+                      </td>
+                      <td class="p-2 border-b text-center">
+                        ${(product.price_sale === product.price) ?
+                            new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)
+                            : `<span class="line-through text-gray-500">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</span>
+                               <span class="text-red-500">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price_sale)}</span>`}
+                      </td>
+                      <td class="p-2 border-b text-center">${product.category}</td>
+                      <td class="p-2 border-b text-center">${product.brand}</td>
+                      <td class="border-b text-center">${product.create_time.toLocaleString()}</td>
+                      <td class="p-2 border-b text-center">${product.in_stock}</td>
+                      <td class="p-2 border-b text-center">
+                        ${ product.status === 'on stock' ? `<span class="text-green-500">Còn hàng</span>`
+                          : product.status === 'out of stock' ? `<span class="text-red-500">Hết hàng</span>`
+                          : `<span class="text-yellow-500">Ngừng kinh doanh</span>` }
+                      </td>
+                      <td class="p-2 border-b text-center">${product.sales}</td>
                     </tr>
                 `;
       tableBody.innerHTML += row;
@@ -403,4 +520,32 @@
   document
     .getElementById('addProductForm')
     .addEventListener('submit', addProduct);
+
+  async function fetchFilterProducts() {
+    const category = document.getElementById('category').value;
+    const brand = document.getElementById('brand').value;
+    const sort = document.getElementById('sort').value;
+
+    // Build query string
+    let queryString = new URLSearchParams();
+
+    if (category && category !== 'default') queryString.append('category', category);
+    if (brand && brand !== 'default') queryString.append('brand', brand);
+    if (sort && sort !== 'default') {
+      const [field, order] = sort.split('-');
+      queryString.append('sortBy', field);
+      queryString.append('order', order);
+    }
+
+    const res = await fetch(`/api/product?${queryString.toString()}`);
+    const data = await res.json();
+    renderProducts(data.products);
+  }
+
+  // Event listener for filter button
+  document.getElementById('filter-button').addEventListener('click', fetchFilterProducts);
+
+  // Event listener for sorting
+  document.getElementById('sort').addEventListener('change', fetchFilterProducts);
+
 </script>

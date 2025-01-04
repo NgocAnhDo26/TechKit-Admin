@@ -24,10 +24,17 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-auto p-8">
-          <% switch (section) { case 'account': %> <%- include('account') %> <%
-          break; case 'product': %> <%- include('product') %> <% break; case
-          'order': %> <%- include('order') %> <% break; case 'report': %> <%-
-          include('report') %> <% break; default: break;} %>
+          <% if (section === 'account') { %>
+            <%- include('account'); %>
+          <% } else if (section === 'product') { %>
+            <%- include('product', {data: data}); %>
+          <% } else if (section === 'order') { %>
+            <%- include('order'); %>
+          <% } else if (section === 'report') { %>
+            <%- include('report'); %>
+          <% } else { %>
+            <%- include('account'); %>
+          <% } %>
         </main>
       </div>
     </div>

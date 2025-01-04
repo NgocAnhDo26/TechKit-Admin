@@ -17,4 +17,16 @@ router.post('/', upload.array('images'), async (req, res) => {
     });
 });
 
+router.get('/', async (req, res) => {
+  productService
+    .fetchProductWithQuery(req.query)
+    .then((products) => {
+      res.json(products);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
 export default router;

@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import { createClient } from 'redis';
+import multer from 'multer';
 
 dotenv.config({ path: '.env' });
 
@@ -28,4 +29,8 @@ await redisClient.connect();
 // Init database
 export const prisma = new PrismaClient();
 
-export { cloudinary, redisClient };
+// Configure Multer for file handling
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage });
+
+export { cloudinary, redisClient, upload };

@@ -5,7 +5,7 @@ import session from 'express-session';
 import { RedisStore } from 'connect-redis';
 import { redisClient } from './src/config/config.js';
 import passport from 'passport';
-import { getUrl } from './src/components/util/util.js';
+import { errorResponse, getUrl } from './src/components/util/util.js';
 
 const app = express();
 const __dirname = import.meta.dirname;
@@ -43,11 +43,7 @@ app.use(router); // Init routes
 // Handing errors
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).render('index', {
-    section: 'error',
-    message: 'Xin lỗi, có lỗi xảy ra',
-    status: 500,
-  });
+  res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
 });
 
 const PORT = process.env.PORT ?? 2000; // Server setup

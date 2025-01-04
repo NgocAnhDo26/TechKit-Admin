@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from './authService.js';
+import { errorResponse } from '../util/util.js';
 
 const router = express.Router();
 
@@ -33,13 +34,13 @@ router.get(
 );
 
 router.get('/google/callback', (req, res, next) => {
-  passport.authenticate('google', (err, user) => {
+  passport.authenticate('google', (err, user, info) => {
     if (err) {
       return next(err);
     }
     if (!user) {
       // Authentication failed
-      return res.redirect('/');
+      res.status(400).send(errorResponse(400, info.message));
     }
 
     req.login(user, (err) => {

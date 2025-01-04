@@ -18,23 +18,23 @@ model product {
   name           String           @unique(map: "name") @db.VarChar(70)
   brand_id       Int?
   category_id    Int?
-  storage        String           @db.VarChar(10)
-  cpu            String           @db.VarChar(30)
-  screen_size    String           @db.VarChar(20)
-  resolution     String           @db.VarChar(50)
-  ram            String           @db.VarChar(10)
+  storage        String?          @db.VarChar(20)
+  cpu            String?          @db.VarChar(100)
+  screen_size    String?          @db.VarChar(30)
+  resolution     String?          @db.VarChar(50)
+  ram            String?          @db.VarChar(20)
   graphic_card   String?          @db.VarChar(50)
   description    String?          @db.Text
   price          Int              @default(25990000)
   price_sale     Int?             @default(19990000)
-  in_stock       Int              @default(1)
-  sales          Int              @default(1)
+  in_stock       Int?             @default(1)
+  sales          Int?             @default(0)
   create_time    DateTime         @default(now()) @db.Timestamp(0)
   status         String           @default("on stock") @db.VarChar(20)
   cart           cart[]
   order_product  order_product[]
-  brand          brand?           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_brand")
   category       category?        @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_category")
+  brand          brand?           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_product_brand")
   product_image  product_image[]
   product_review product_review[]
 
@@ -51,7 +51,7 @@ model account {
   address        String?          @db.VarChar(100)
   birthdate      DateTime?        @db.DateTime(0)
   sex            String?          @db.VarChar(50)
-  avatar         String           @default("TechKit/avatar/default") @db.VarChar(100)
+  avatar         String?          @db.VarChar(100)
   create_time    DateTime         @default(now()) @db.Timestamp(0)
   is_lock        Boolean          @default(false)
   is_admin       Boolean          @default(false)

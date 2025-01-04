@@ -19,8 +19,7 @@
           <% switch (section) { case 'account': %> <%- include('account') %> <%
           break; case 'product': %> <%- include('product') %> <% break; case
           'order': %> <%- include('order') %> <% break; case 'report': %> <%-
-          include('report') %> <% break; default: %> <%- include('error') %> <%
-          break;} %>
+          include('report') %> <% break; default: break;} %>
         </main>
       </div>
     </div>

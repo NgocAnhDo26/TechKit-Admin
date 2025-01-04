@@ -1,40 +1,36 @@
 <!-- Sidebar -->
-<aside class="w-64 bg-gray-800 p-4 text-white">
-    <h1 class="mb-8 text-2xl font-bold">TechKit Dashboard</h1>
-    <nav>
-        <ul>
-            <li>
-                <a
-                    href="/account"
-                    class="block py-2 px-4 hover:bg-gray-700"
-                    onclick="showSection('account')"
-                    >Account Management</a
-                >
-            </li>
-            <li>
-                <a
-                    href="/product"
-                    class="block py-2 px-4 hover:bg-gray-700"
-                    onclick="showSection('products')"
-                    >Products Management</a
-                >
-            </li>
-            <li>
-                <a
-                    href="/order"
-                    class="block py-2 px-4 hover:bg-gray-700"
-                    onclick="showSection('orders')"
-                    >Customer Orders</a
-                >
-            </li>
-            <li>
-                <a
-                    href="/report"
-                    class="block py-2 px-4 hover:bg-gray-700"
-                    onclick="showSection('reports')"
-                    >Reports</a
-                >
-            </li>
-        </ul>
-    </nav>
+<aside class="w-fit bg-gray-800 p-4 text-white">
+  <h1 class="mb-8 text-2xl font-bold text-center">TechKit Dashboard</h1>
+  <nav class="flex flex-col">
+      <a href="/account" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-user fa-md"></i>
+        Account Management
+      </a>
+      <a href="/product" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-boxes-stacked fa-md"></i>
+        Products Management
+      </a>
+      
+      <a href="/product" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-box fa-sm mr-2"></i>
+        Product
+      </a>
+      <a href="/product" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-tag fa-sm mr-2"></i>
+        Category
+      </a>
+      <a href="/product" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-industry fa-sm mr-2"></i>
+        Brand
+      </a>
+      <a href="/order" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-truck-fast fa-sm"></i>
+        Customer Orders
+      </a>
+      <a href="/report" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+        <i class="fa-solid fa-chart-simple fa-md"></i>
+        Reports
+      </a>
+    </ul>
+  </nav>
 </aside>

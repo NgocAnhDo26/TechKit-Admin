@@ -9,10 +9,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
     />
-    <script src="https://kit.fontawesome.com/5380681a3e.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/5380681a3e.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body class="bg-gray-100 font-inter">
@@ -24,17 +27,12 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-auto p-8">
-          <% if (section === 'account') { %>
-            <%- include('account'); %>
-          <% } else if (section === 'product') { %>
-            <%- include('product', {data: data}); %>
-          <% } else if (section === 'order') { %>
-            <%- include('order'); %>
-          <% } else if (section === 'report') { %>
-            <%- include('report'); %>
-          <% } else { %>
-            <%- include('account'); %>
-          <% } %>
+          <% if (section === 'account') { %> <%- include('account'); %> <% }
+          else if (section === 'product') { %> <%- include('product', {data:
+          data}); %> <% } else if (section === 'order') { %> <%-
+          include('order'); %> <% } else if (section === 'report') { %> <%-
+          include('report'); %> <% } else { %> <%- include('account'); %> <% }
+          %>
         </main>
       </div>
     </div>
@@ -43,9 +41,11 @@
       function showModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
       }
+
       function hideModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
       }
+
       function showSuccessNotification(type) {
         // SweetAlert2
         Swal.fire({
@@ -56,6 +56,7 @@
           showConfirmButton: false,
         });
       }
+
       function showErrorNotification(type, message) {
         Swal.fire({
           icon: 'error',
@@ -66,6 +67,7 @@
           showConfirmButton: false,
         });
       }
+
       function showConfirmDialog(message, confirmCallback) {
         Swal.fire({
           title: 'Xác Nhận',
@@ -82,7 +84,8 @@
           }
         });
       }
-      function showLoading(title='Đang tải...') {
+
+      function showLoading(title = 'Đang tải...') {
         Swal.fire({
           title: title,
           allowOutsideClick: false,
@@ -92,6 +95,101 @@
           },
         });
       }
+
+      function hideLoading() {
+        Swal.close();
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat('vi-VN', {
+          style: 'currency',
+          currency: 'VND',
+        }).format(value);
+      }
+
+      function renderPagination(
+        containerId,
+        currentPage,
+        totalPage,
+        onPageChange,
+      ) {
+        const pagination = document.getElementById(containerId);
+        pagination.innerHTML = '';
+
+        // Previous button
+        if (currentPage > 1) {
+          const prevBtn = document.createElement('button');
+          prevBtn.innerText = 'Trang trước';
+          prevBtn.classList.add(
+            'rounded',
+            'border',
+            'bg-blue-500',
+            'py-2',
+            'px-4',
+            'text-white',
+            'hover:bg-blue-700',
+            'focus:outline-none',
+          );
+          prevBtn.onclick = () => onPageChange(currentPage - 1);
+          pagination.appendChild(prevBtn);
+        }
+
+        // Page numbers
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPage, startPage + 4);
+
+        for (let i = startPage; i <= endPage; i++) {
+          const btn = document.createElement('button');
+          btn.innerText = i;
+          btn.onclick = () => onPageChange(i);
+          if (i === currentPage) {
+            btn.disabled = true;
+            btn.classList.add(
+              'bg-blue-600',
+              'text-white',
+              'px-3',
+              'py-2',
+              'rounded',
+            );
+          } else {
+            btn.classList.add(
+              'bg-white',
+              'text-blue-500',
+              'border',
+              'border-blue-500',
+              'px-3',
+              'py-2',
+              'rounded',
+              'hover:bg-blue-500',
+              'hover:text-white',
+            );
+          }
+          pagination.appendChild(btn);
+        }
+
+        // Next button
+        if (currentPage < totalPage) {
+          const nextBtn = document.createElement('button');
+          nextBtn.innerText = 'Trang sau';
+          nextBtn.classList.add(
+            'rounded',
+            'border',
+            'bg-blue-500',
+            'py-2',
+            'px-4',
+            'text-white',
+            'hover:bg-blue-700',
+            'focus:outline-none',
+          );
+          nextBtn.onclick = () => onPageChange(currentPage + 1);
+          pagination.appendChild(nextBtn);
+        }
+      }
+
+      // Hide loading indicator when page finishes loading
+      document.addEventListener('DOMContentLoaded', () => {
+        hideLoading();
+      });
     </script>
   </body>
 </html>

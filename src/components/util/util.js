@@ -11,7 +11,6 @@ export const uploadImage = async (address, folder) =>
   await cloudinary.uploader
     .upload(address, {
       ...(folder && { folder: folder }), // If folder is not null, add folder to upload
-      public_id: 'category_gaming',
     })
     .catch((error) => {
       console.log(error);

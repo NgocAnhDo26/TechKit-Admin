@@ -155,7 +155,7 @@ export async function fetchProductWithQuery(query) {
       },
       brand: {
         select: { name: true },
-      }
+      },
     },
     orderBy: orderBy,
   });
@@ -238,7 +238,7 @@ function formatProducts(products) {
     graphic_card: product.graphic_card,
     description: product.description,
     profile_img: getImage(
-      product.product_image.find((img) => img.is_profile_img).public_id,
+      product.product_image.find((img) => img.is_profile_img)?.public_id,
     ),
     images: product.product_image
       .filter((img) => !img.is_profile_img)
@@ -330,10 +330,12 @@ export async function updateProductProfileImage(id, image) {
   try {
     // Upload new image to cloudinary
     const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream({ folder: 'TechKit/product' }, (error, result) => {
-        if (error) reject(error);
-        resolve(result);
-      }).end(image.buffer);
+      cloudinary.uploader
+        .upload_stream({ folder: 'TechKit/product' }, (error, result) => {
+          if (error) reject(error);
+          resolve(result);
+        })
+        .end(image.buffer);
     });
 
     // Delete old image from cloudinary
@@ -353,7 +355,10 @@ export async function updateProductProfileImage(id, image) {
     const resultImage = getImage(result.public_id);
     return { success: true, image: resultImage };
   } catch (error) {
-    return { success: false, message: 'Cập nhật ảnh đại diện không thành công' };
+    return {
+      success: false,
+      message: 'Cập nhật ảnh đại diện không thành công',
+    };
   }
 }
 
@@ -415,10 +420,12 @@ export async function uploadProductImages(id, images) {
     await Promise.all(
       images.map(async (image) => {
         const result = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ folder: 'TechKit/product' }, (error, result) => {
-            if (error) reject(error);
-            resolve(result);
-          }).end(image.buffer);
+          cloudinary.uploader
+            .upload_stream({ folder: 'TechKit/product' }, (error, result) => {
+              if (error) reject(error);
+              resolve(result);
+            })
+            .end(image.buffer);
         });
 
         await prisma.product_image.create({

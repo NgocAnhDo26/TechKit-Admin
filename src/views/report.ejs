@@ -1,19 +1,198 @@
-<!-- Reports Section -->
-<section id="reports">
-    <h2 class="mb-4 text-2xl font-bold">Reports</h2>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div class="rounded bg-white p-4 shadow">
-            <h3 class="mb-2 text-lg font-semibold">Sales Overview</h3>
-            <p>Total Sales: $10,000</p>
-            <p>Number of Orders: 100</p>
-        </div>
-        <div class="rounded bg-white p-4 shadow">
-            <h3 class="mb-2 text-lg font-semibold">Top Products</h3>
-            <ol class="list-inside list-decimal">
-                <li>Product A</li>
-                <li>Product B</li>
-                <li>Product C</li>
-            </ol>
-        </div>
+<section id="reports" class="w-full p-4">
+  <h2 class="mb-4 text-2xl font-bold text-gray-800">Báo Cáo Thống Kê</h2>
+  <form
+    onsubmit="event.preventDefault(); fetchReport();"
+    class="flex flex-col gap-4 mb-4 max-w-lg"
+  >
+    <div class="flex items-center gap-2">
+      <label for="duration" class="text-gray-700 font-semibold flex-1"
+        >Chọn khoảng thời gian:</label
+      >
+      <select
+        id="duration"
+        name="duration"
+        class="block w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500 flex-1"
+      >
+        <option value="day">Ngày</option>
+        <option value="week">Tuần</option>
+        <option value="month">Tháng</option>
+        <option value="year">Năm</option>
+      </select>
     </div>
+    <div class="flex items-center gap-2">
+      <label for="dateStr" class="text-gray-700 font-semibold flex-1"
+        >Ngày cụ thể:</label
+      >
+      <input
+        type="date"
+        id="dateStr"
+        required
+        class="block w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500 flex-1"
+      />
+    </div>
+    <button
+      type="submit"
+      class="bg-blue-600 text-white py-2 mt-2 rounded hover:bg-blue-700 focus:outline-none"
+    >
+      Xem Báo Cáo
+    </button>
+  </form>
+  <div class="flex justify-between mb-4 max-w-lg">
+    <div>
+      <h3 class="text-lg font-bold text-gray-800">
+        Tổng Doanh Số: <span id="totalSales" class="text-gray-700">0</span>
+      </h3>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-gray-800">
+        Tổng Doanh Thu: <span id="totalRevenue" class="text-gray-700">0</span>
+      </h3>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-8 mt-8">
+    <div>
+      <h3 class="text-xl font-semibold mb-4">
+        Biểu Đồ Thể Hiện Doanh Số và Doanh Thu Của Từng
+        <span class="underline">Sản Phẩm</span>
+      </h3>
+      <canvas
+        id="productChart"
+        class="border border-gray-200 rounded bg-white"
+      ></canvas>
+    </div>
+    <div>
+      <h3 class="text-xl font-semibold mb-4">
+        Biểu Đồ Thể Hiện Doanh Số và Doanh Thu Của Từng
+        <span class="underline">Danh Mục</span>
+      </h3>
+      <canvas
+        id="categoryChart"
+        class="border border-gray-200 rounded bg-white"
+      ></canvas>
+    </div>
+    <div>
+      <h3 class="text-xl font-semibold mb-4">
+        Biểu Đồ Thể Hiện Doanh Số và Doanh Thu Của Từng
+        <span class="underline">Thương Hiệu</span>
+      </h3>
+      <canvas
+        id="brandChart"
+        class="border border-gray-200 rounded bg-white"
+      ></canvas>
+    </div>
+  </div>
 </section>
+
+<!-- import cdn chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let productChart, categoryChart, brandChart;
+
+  function createChart(canvasId, labels, salesData, revenueData, title) {
+    const ctx = document.getElementById(canvasId);
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Sales (Quantity)',
+            data: salesData,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+          },
+          {
+            label: 'Revenue (vnd)',
+            data: revenueData,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: title,
+          },
+        },
+      },
+    });
+  }
+
+  async function fetchReport() {
+    const duration = document.getElementById('duration').value;
+    let dateStr = document.getElementById('dateStr').value;
+
+    // Format date from YYYY-MM-DD to DD/MM/YYYY
+    if (dateStr) {
+      const [year, month, day] = dateStr.split('-');
+      dateStr = `${day}/${month}/${year}`;
+    }
+
+    const res = await fetch(
+      `/api/report?duration=${duration}&dateStr=${dateStr}`,
+    );
+    const data = await res.json();
+
+    if (data.success) {
+      // SweetAlert2
+      showSuccessNotification('Xem report thành công');
+    } else {
+      showErrorNotification('Xem report thất bại', data.message);
+      return;
+    }
+
+    // Destroy existing charts
+    [productChart, categoryChart, brandChart].forEach((chart) =>
+      chart?.destroy(),
+    );
+
+    // Format price to VND
+    const formatPrice = (price) =>
+      new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+      }).format(price);
+
+    // Update total numbers
+    document.getElementById('totalSales').textContent = data.totalSale.sales;
+    document.getElementById('totalRevenue').textContent = formatPrice(
+      data.totalSale.revenue,
+    );
+
+    // Create product chart
+    productChart = createChart(
+      'productChart',
+      data.saleByProduct.map((item) => item.product),
+      data.saleByProduct.map((item) => item.sales),
+      data.saleByProduct.map((item) => item.revenue),
+      'Product Sales & Revenue',
+    );
+
+    // Create category chart
+    categoryChart = createChart(
+      'categoryChart',
+      data.saleByCategory.map((item) => item.category),
+      data.saleByCategory.map((item) => item.sales),
+      data.saleByCategory.map((item) => item.revenue),
+      'Category Sales & Revenue',
+    );
+
+    // Create brand chart
+    brandChart = createChart(
+      'brandChart',
+      data.saleByBrand.map((item) => item.brand),
+      data.saleByBrand.map((item) => item.sales),
+      data.saleByBrand.map((item) => item.revenue),
+      'Brand Sales & Revenue',
+    );
+  }
+</script>

@@ -5,6 +5,7 @@ import { errorResponse } from '../util/util.js';
 
 const router = express.Router();
 
+// Add new product
 router.post('/', upload.array('images'), async (req, res) => {
   productService
     .createProduct(req.body, req.files)

@@ -1,6 +1,7 @@
 import express from 'express';
 import { renderCategoryPage } from '../components/category/categoryController.js';
 import { renderBrandPage } from '../components/brand/brandController.js';
+import { renderProfilePage } from '../components/user/userController.js';
 import { renderAccountPage } from '../components/account/accountController.js';
 import authController from '../components/auth/authController.js';
 import { forbidRoute } from '../components/auth/authService.js';
@@ -11,6 +12,8 @@ import { fetchAllBrands } from '../components/brand/brandService.js';
 const router = express.Router();
 
 router.get('/', renderAccountPage);
+
+router.use('/profile', renderProfilePage);
 
 router.get('/account', renderAccountPage);
 

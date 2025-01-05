@@ -35,6 +35,8 @@
             <%- include('category', {categories: categories}); %>
           <% } else if (section === 'brand') { %>
             <%- include('brand', {brands: brands}); %>
+          <% } else if (section === 'profile') { %>
+            <%- include('profile', {account: account}); %>
           <% } else if (section === 'order') { %>
             <%- include('order'); %>
           <% } else if (section === 'report') { %>

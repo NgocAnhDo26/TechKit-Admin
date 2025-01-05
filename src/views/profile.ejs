@@ -1,0 +1,224 @@
+<div class="flex-1 flex flex-col border-md shadow-md rounded-md p-5 text-md pt-10">
+    <h1 class="font-bold text-xl">Thông tin cá nhân</h1>
+
+    <form>
+        <div class="flex flex-col gap-5 mt-5">
+            <div class="flex gap-10"> 
+                <p>Ảnh đại diện:</p>
+                <img src="<%= account.avatar_url %>" id="avatar-container" alt="Avatar" class="rounded-full w-16 object-cover" />
+            </div>
+
+            <div id="choose-img" class="hidden items-center">
+                <input type="file" id="avatar" name="avatar" class="border border-gray-300 rounded-md p-2"
+                    accept="image/*" />
+
+                <img id="preview" src="" alt="Preview" class="rounded-md w-14 object-cover m-2" />
+            </div>
+
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="name">Họ và tên</label>
+                <input type="text" id="name" name="name" class="border border-gray-300 rounded-md p-2 opacity-60"
+                    value="<%= account.name %>" readonly required />
+            </div>
+
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="border border-gray-300 rounded-md p-2 opacity-60"
+                    value="<%= account.email %>" readonly />
+            </div>
+
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="phone">Số điện thoại</label>
+                <input type="text" id="phone" name="phone" class="border border-gray-300 rounded-md p-2 opacity-60"
+                    value="<%= account.phone %>" readonly />
+            </div>
+
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="birthday">Ngày sinh</label>
+                <input type="date" id="birthday" name="birthday"
+                    class="border border-gray-300 rounded-md p-2 opacity-60" value="<%= account.birthdate %>" readonly />
+            </div>
+
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="address">Địa chỉ</label>
+                <input type="text" id="address" name="address" class="border border-gray-300 rounded-md p-2 opacity-60"
+                    value="<%= account.address %>" readonly />
+            </div>
+            
+            <div class="flex flex-col gap-2 lg:w-1/2">
+                <label for="sex">Giới tính</label>
+                <select id="sex" name="sex" class="border border-gray-300 rounded-md p-2 opacity-60" disabled>
+                    <option value="" <%= !account.sex ? 'selected' : '' %>>Chọn giới tính</option>
+                    <option value="Nam" <%= account.sex === 'Nam' ? 'selected' : '' %>>Nam</option>
+                    <option value="Nữ" <%= account.sex === 'Nữ' ? 'selected' : '' %>>Nữ</option>
+                </select>
+            </div>
+                        
+
+            <button id="update" type="button"
+                class="text-primary border-primary border-2 hover:scale-105 0 rounded-md py-2 px-5 w-fit">
+                Cập nhật
+            </button>
+            <div class="flex gap-5">
+                <button id="apply" type="button"
+                    class="text-primary border-primary border-2 hover:scale-105 rounded-md py-2 px-5 hidden w-fit">
+                    Áp dụng
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Image preview
+    const avatar = document.getElementById('avatar');
+    const preview = document.getElementById('preview');
+
+    avatar.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    // Click update button, enable all input fields (except email)
+    const updateButton = document.getElementById('update');
+    const applyButton = document.getElementById('apply');
+
+    updateButton.addEventListener('click', () => {
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach((input) => {
+            if (input.id !== 'email') {
+                input.removeAttribute('readonly');
+                input.classList.remove('opacity-60');
+            }
+        });
+        const select = document.getElementById('sex');
+        select.removeAttribute('disabled');
+        select.classList.remove('opacity-60');
+        // Open image preview
+        const chooseImg = document.getElementById('choose-img');
+        chooseImg.style.display = 'flex';
+
+
+        updateButton.classList.add('hidden');
+        applyButton.classList.remove('hidden');
+    });
+
+    applyButton.addEventListener('click', async () => {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const birthdate = document.getElementById('birthday').value;
+        const address = document.getElementById('address').value;
+        const sex = document.getElementById('sex').value;
+        const avatar = document.getElementById('avatar').files[0];
+
+        const info = { name, address, birthdate, sex, phone };
+
+        const updateAvatar = async (file) => {
+            try {
+                if (!file) {
+                    // If no avatar file is selected, just return a success response with no error message
+                    return { success: true, message: '' };
+                }
+
+                const formData = new FormData();
+                formData.append('avatar', file);
+                const response = await fetch('/api/profile/avatar', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const avatar_container = document.getElementById('avatar-container');
+                    const avatar_header = document.getElementById('avatar-header');
+                    avatar_container.setAttribute('src', data.avatar_url);
+                    avatar_header.setAttribute('src', data.avatar_url);
+                    return { success: true, message: 'Avatar updated successfully' };
+                } else {
+                    console.error('Failed to update avatar:', data.message);
+                    return { success: false, message: data.message || 'Error updating avatar' };
+                }
+            } catch (error) {
+                console.error('Error updating avatar:', error);
+                return { success: false, message: 'Error updating avatar' };
+            }
+        };
+
+        const updateProfile = async () => {
+            try {
+                const response = await fetch('/api/profile/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(info),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('Profile updated successfully:', data);
+                    const inputs = document.querySelectorAll('input');
+                    inputs.forEach((input) => {
+                        if (input.id !== 'old-password' && input.id !== 'new-password' && input.id !== 'confirm-password') {
+                            input.setAttribute('readonly', 'true');
+                            input.classList.add('opacity-60');
+                        }
+                    });
+                    const select = document.getElementById('sex');
+                    select.setAttribute('disabled', 'true');
+                    select.classList.add('opacity-60');
+
+                    const chooseImg = document.getElementById('choose-img');
+                    chooseImg.style.display = '';
+
+                    applyButton.classList.add('hidden');
+                    updateButton.classList.remove('hidden');
+                    return { success: true, message: 'Profile updated successfully' };
+                } else {
+                    console.error('Failed to update profile:', data.message);
+                    return { success: false, message: data.message || 'Error updating profile' };
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                return { success: false, message: 'Error updating profile' };
+            }
+        };
+
+        // Call the updateAvatar function
+        const avatarPromise = await updateAvatar(avatar);
+        const profilePromise = await updateProfile();
+
+        const avatarMessage = avatarPromise.message || '';
+        const profileMessage = profilePromise.message || '';
+
+        // Concatenate the messages, but only if they exist
+        const errorMessage = `${avatarMessage} ${profileMessage}`.trim();
+
+        if (avatarPromise.success && profilePromise.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Cập nhật profile thành công',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: true,
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Cập nhật profile thất bại',
+                text: errorMessage || 'An unexpected error occurred',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: true,
+            });
+        }
+    });
+</script>

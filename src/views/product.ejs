@@ -75,7 +75,7 @@
     <tbody id="productTableBody">
       <!-- Product rows will be dynamically added here -->
       <% data.products.forEach((product) => { %>
-      <tr class="text-sm">
+      <tr class="text-sm" data-product-id="<%= product.id %>">
         <td class="p-2 px-4 border-b text-center"><%= product.id %></td>
         <td class="flex p-2 border-b items-center">
           <img class="h-16 w-16 object-cover mr-2" src="<%= product.profile_img.url %>" alt="<%= product.name %>">
@@ -163,238 +163,119 @@
 
 
 <!-- Add Product Modal -->
-<div
-  id="addProductModal"
-  class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
->
-  <div
-    class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
-  >
+<div id="addProductModal" class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
+  <div class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
     <h3 class="mb-4 text-lg font-bold">Thêm sản phẩm mới</h3>
     <form id="addProductForm">
+      <!-- Basic Info -->
       <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="name">
-          Tên sản phẩm
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="name"
-          type="text"
-          placeholder="Tên sản phẩm"
-          required
-        />
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="name">Tên sản phẩm</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="name" type="text" placeholder="Tên sản phẩm" required />
+      </div>
+
+      <!-- Brand & Category -->
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="brand">Thương hiệu</label>
+        <select class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="brand"></select>
       </div>
       <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="brand">
-          Thương hiệu
-        </label>
-        <select
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="brand"
-        >
-          <!-- Options will be dynamically added -->
-        </select>
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="category">Loại sản phẩm</label>
+        <select class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="category"></select>
+      </div>
+
+      <!-- Price Info -->
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="price">Giá gốc</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="price" type="number" min="0" placeholder="Giá gốc" required />
       </div>
       <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="category"
-        >
-          Loại sản phẩm
-        </label>
-        <select
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="category"
-        >
-          <!-- Options will be dynamically added -->
-        </select>
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="priceSale">Giá khuyến mãi</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="priceSale" type="number" min="0" placeholder="Giá khuyến mãi" />
       </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="storage">
-          Bộ nhớ trong
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="storage"
-          type="text"
-          placeholder="512GB SSD"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="cpu">
-          CPU
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="cpu"
-          type="text"
-          placeholder="Intel Core i5-1235U"
-        />
-      </div>
-      <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="screenSize"
-        >
-          Kích thước màn hình
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="screenSize"
-          type="text"
-          placeholder="15.6 inch"
-        />
-      </div>
-      <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="resolution"
-        >
-          Độ phân giải
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="resolution"
-          type="text"
-          placeholder="1920x1080 (FHD)"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="ram">
-          RAM
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="ram"
-          type="text"
-          placeholder="8GB DDR4"
-        />
-      </div>
-      <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="graphicCard"
-        >
-          Card đồ họa
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="graphicCard"
-          type="text"
-          placeholder="NVIDIA GeForce MX550 2GB"
-        />
-      </div>
-      <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="description"
-        >
-          Mô tả sản phẩm
-        </label>
-        <textarea
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none h-32"
-          id="description"
-          placeholder="Mô tả chi tiết sản phẩm"
-        ></textarea>
-      </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="profileImageAdd">
-          Ảnh đại diện
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="profileImageAdd"
-          type="file"
-          accept="image/*"
-          required
-        />
-        <div id="profileImagePreview" class="flex flex-wrap mt-2">
-          <!-- Preview profile image will be appended here -->
+
+      <!-- Product Specs -->
+      <p class="font-bold mb-2">Thông số sản phẩm</p>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="storage">Bộ nhớ trong</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="storage" type="text" placeholder="512GB SSD" />
+        </div>
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="cpu">CPU</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="cpu" type="text" placeholder="Intel Core i5" />
+        </div>
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="screenSize">Kích thước màn hình</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="screenSize" type="text" placeholder="15.6 inch" />
+        </div>
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="resolution">Độ phân giải</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="resolution" type="text" placeholder="1920x1080" />
+        </div>
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="ram">RAM</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="ram" type="text" placeholder="8GB DDR4" />
+        </div>
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-bold text-gray-700" for="graphicCard">Card đồ họa</label>
+          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+            id="graphicCard" type="text" placeholder="NVIDIA MX550" />
         </div>
       </div>
+
+      <!-- Description -->
       <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="otherImages">
-          Ảnh khác
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="otherImages"
-          type="file"
-          multiple
-          accept="image/*"
-        />
-        <div id="otherImagesPreview" class="flex flex-wrap mt-2">
-          <!-- Preview images will be appended here -->
-        </div>
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="description">Mô tả sản phẩm</label>
+        <textarea class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="description" placeholder="Mô tả chi tiết sản phẩm"></textarea>
+      </div>
+
+      <!-- Images -->
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="profileImageAdd">Ảnh đại diện</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="profileImageAdd" type="file" accept="image/*" required />
+        <div id="profileImagePreview" class="flex flex-wrap mt-2"></div>
       </div>
       <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="price">
-          Giá gốc
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="price"
-          type="number"
-          min="0"
-          placeholder="Giá gốc"
-          required
-        />
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="otherImages">Ảnh khác</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="otherImages" type="file" multiple accept="image/*" />
+        <div id="otherImagesPreview" class="flex flex-wrap mt-2"></div>
+      </div>
+
+      <!-- Stock & Status -->
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="inStock">Số lượng trong kho</label>
+        <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="inStock" type="number" min="0" placeholder="Số lượng" />
       </div>
       <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="priceSale"
-        >
-          Giá khuyến mãi
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="priceSale"
-          type="number"
-          min="0"
-          placeholder="Giá khuyến mãi"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="inStock">
-          Số lượng trong kho
-        </label>
-        <input
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="inStock"
-          type="number"
-          min="0"
-          placeholder="Số lượng"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="mb-2 block text-sm font-bold text-gray-700" for="status">
-          Trạng thái
-        </label>
-        <select
-          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="status"
-        >
-          <option value="">Chọn trạng thái</option>
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="status">Trạng thái</label>
+        <select class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="status">
           <option value="on stock">Còn hàng</option>
           <option value="out of stock">Hết hàng</option>
           <option value="suspend">Ngừng kinh doanh</option>
         </select>
       </div>
+
+      <!-- Buttons -->
       <div class="flex items-center justify-between">
-        <button
-          class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-          type="submit"
-        >
-          Thêm sản phẩm
-        </button>
-        <button
-          class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
-          type="button"
-          onclick="hideModal('addProductModal')"
-        >
-          Hủy
-        </button>
+        <button id="addProductButton" class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          type="submit">Thêm sản phẩm</button>
+        <button class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+          type="button" onclick="closeAddProduct()">Hủy</button>
       </div>
     </form>
   </div>
@@ -626,7 +507,7 @@
         </label>
         <input
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="profileImage"
+          id="profile-image"
           type="file"
           accept="image/*"
         />
@@ -642,7 +523,7 @@
         </label>
         <input
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="images"
+          id="other-images"
           type="file"
           multiple
           accept="image/*"
@@ -657,15 +538,7 @@
           class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
           type="submit"
         >
-          Lưu
-        </button>
-        <button
-          id="cancelEditImagesButton"
-          class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
-          type="button"
-          onclick="hideModal('editImagesModal')"
-        >
-          Hủy
+          OK
         </button>
       </div>
     </form>
@@ -679,7 +552,7 @@
     tableBody.innerHTML = '';
     products.forEach((product) => {
       const row = `
-                    <tr class="text-sm">
+                    <tr class="text-sm" data-product-id="${product.id}">
                       <td class="p-2 px-4 border-b text-center">${product.id}</td>
                       <td class="flex p-2 border-b items-center">
                         <img class="h-16 w-16 object-cover mr-2" src="${product.profile_img.url}" alt="${product.name}">
@@ -738,48 +611,60 @@
     renderPreview('otherImagesPreview', otherImages, removeOtherImage);
   }
 
-  function createImagePreviewElement(fileData, removeCallback) {
-    // Creates the wrapper, image, and remove button
+  function createImagePreviewElement(fileData, removeCallback, isProfile = false) {
+    // Creates the wrapper and image
     const wrapper = document.createElement('div');
     wrapper.classList.add('relative', 'inline-block', 'm-1');
     const img = document.createElement('img');
     img.src = fileData;
     img.classList.add('h-20', 'w-20', 'object-cover', 'm-1', 'border', 'border-gray-200');
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.innerText = 'x';
-    removeBtn.classList.add(
-      'absolute', '-top-2', '-right-2', 'bg-red-600', 'text-white',
-      'rounded-full', 'w-4', 'h-4', 'flex', 'items-center', 'justify-center',
-      'text-sm', 'font-bold', 'hover:bg-red-700', 'focus:outline-none'
-    );
-    removeBtn.onclick = removeCallback;
     wrapper.appendChild(img);
-    wrapper.appendChild(removeBtn);
+
+    // Only add remove button if it's not a profile image
+    if (!isProfile) {
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.innerText = 'x';
+      removeBtn.classList.add(
+        'absolute', '-top-2', '-right-2', 'bg-red-600', 'text-white',
+        'rounded-full', 'w-4', 'h-4', 'flex', 'items-center', 'justify-center',
+        'text-sm', 'font-bold', 'hover:bg-red-700', 'focus:outline-none'
+      );
+      removeBtn.onclick = removeCallback;
+      wrapper.appendChild(removeBtn);
+    }
+    
     return wrapper;
   }
 
   function renderPreview(containerId, filesArray, removeHandler, areUrls = false) {
     const previewContainer = document.getElementById(containerId);
     previewContainer.innerHTML = '';
+  
     filesArray.forEach((file, index) => {
-      if (areUrls) {
-        const wrapper = createImagePreviewElement(file, () => removeHandler(index));
-        previewContainer.appendChild(wrapper);
-      } else {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const wrapper = createImagePreviewElement(e.target.result, () => removeHandler(index));
-          previewContainer.appendChild(wrapper);
-        };
-        reader.readAsDataURL(file);
-      }
+        if (!file) return;
+        
+        // Check if this is a profile image preview
+        const isProfile = containerId === 'profile-image-preview';
+        
+        if (areUrls) {
+            if (!file.url) return; // Skip if no URL is present
+            const wrapper = createImagePreviewElement(file.url, () => removeHandler(index), isProfile);
+            previewContainer.appendChild(wrapper);
+        } else {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wrapper = createImagePreviewElement(e.target.result, () => removeHandler(index), isProfile);
+                previewContainer.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        }
     });
   }
 
   async function addProduct(event) {
     event.preventDefault();
-    showLoading();
+    showLoading('Đang thêm sản phẩm...');
     const formData = new FormData();
     // Add profile image first
     formData.append('images', profileImage);
@@ -812,12 +697,7 @@
         if (data.success) {
           Swal.close();
           showSuccessNotification('Thêm sản phẩm thành công');
-          hideModal('addProductModal');
-          event.target.reset();
-          profileImage = null;
-          otherImages = []; // Reset other images array
-          renderPreview('profileImagePreview', [], () => {});
-          renderPreview('otherImagesPreview', [], removeOtherImage);
+          closeAddProduct(); // Remove event parameter
         } else {
           showErrorNotification('Thêm sản phẩm thất bại', data.message);
         }
@@ -825,9 +705,8 @@
   }
 
   // Event listeners
-  document
-    .getElementById('addProductForm')
-    .addEventListener('submit', addProduct);
+  const addProductButton = document.getElementById('addProductButton');
+  addProductButton.addEventListener('click', addProduct);
 
   // Initialize dropdowns for brand and category
   async function initializeDropdowns() {
@@ -866,6 +745,16 @@
     });
   }
 
+  function closeAddProduct() {
+    hideModal('addProductModal');
+    // Get form by ID instead of using event.target
+    addProductForm.reset();
+    profileImage = null;
+    otherImages = []; // Reset other images array
+    renderPreview('profileImagePreview', [], () => {});
+    renderPreview('otherImagesPreview', [], removeOtherImage);
+  }
+
   async function fetchFilterProducts(page = 1) {
     const category = document.getElementById('category-filter').value;
     const brand = document.getElementById('brand-filter').value;
@@ -900,47 +789,49 @@
 
   // Edit product
   async function openEditProduct(id) {
-    // Show loading spinner
     showLoading();
 
-    // Fetch category and brand
-    const res = await fetch('/api/category');
-    const data = await res.json();
-    const categories = data.result;
+    // Fetch product first to get its data
+    const productRes = await fetch(`/api/product/${id}`);
+    const product = await productRes.json();
 
-    // Add categories to the dropdown
+    // Fetch categories and brands
+    const [categoryRes, brandRes] = await Promise.all([
+      fetch('/api/category'),
+      fetch('/api/brand')
+    ]);
+    const [categoryData, brandData] = await Promise.all([
+      categoryRes.json(),
+      brandRes.json()
+    ]);
+
+    // Add categories to dropdown with product's category selected
     const categoryDropdown = document.getElementById('category-change');
     categoryDropdown.innerHTML = '';
-    categories.forEach((category) => {
+    categoryData.result.forEach((category) => {
       const option = document.createElement('option');
       option.value = category.id;
       option.innerText = category.name;
+      if (category.id === product.category_id) {
+        option.selected = true;
+      }
       categoryDropdown.appendChild(option);
     });
 
-    const res2 = await fetch('/api/brand');
-    const data2 = await res2.json();
-    const brands = data2.result;
-
-    // Add brands to the dropdown
+    // Add brands to dropdown with product's brand selected
     const brandDropdown = document.getElementById('brand-change');
     brandDropdown.innerHTML = '';
-    brands.forEach((brand) => {
+    brandData.result.forEach((brand) => {
       const option = document.createElement('option');
       option.value = brand.id;
       option.innerText = brand.name;
+      if (brand.id === product.brand_id) {
+        option.selected = true;
+      }
       brandDropdown.appendChild(option);
     });
 
-    // Fetch product by id
-    const res3 = await fetch(`/api/product/${id}`);
-    const product = await res3.json();
-
-    // Set selected brand and category
-    document.getElementById('brand-change').value = product.brand_id;
-    document.getElementById('category-change').value = product.category_id;
-
-    // Fill in the form
+    // Fill in the rest of the form
     document.getElementById('name-change').value = product.name;
     document.getElementById('price-change').value = product.price;
     document.getElementById('priceSale-change').value = product.price_sale;
@@ -999,75 +890,58 @@
     showModal('editProductModal');
   }
 
-  // Edit images form
-  async function editImages(id) {
-    // SHow loading spinner
-    showLoading();
+  let otherImagesPreviewEdit = []; // Store both url and public_id
 
-    // Fetch product by id
+  async function editImages(id) {
+    showLoading();
     const res = await fetch(`/api/product/${id}`);
     const product = await res.json();
 
-    // Fill in the form
-    renderPreview('profile-image-preview', [product.profile_img.url], (i) => removeImageDB(id, product.profile_img.public_id), true);
-    renderPreview('other-images-preview', product.images.map(img => img.url), (i) => removeImageDB(id, product.images[i].public_id), true);
+    // Store complete image objects instead of just URLs
+    otherImagesPreviewEdit = product.images || [];
 
-    // Hide loading spinner
+    // Only render profile image preview if it exists
+    if (product.profile_img && product.profile_img.url) {
+        renderPreview('profile-image-preview', [product.profile_img], () => removeImageDB(id, product.profile_img.public_id), true);
+    } else {
+        document.getElementById('profile-image-preview').innerHTML = '';
+    }
+
+    // Only render other images if they exist
+    if (otherImagesPreviewEdit.length > 0) {
+        renderPreview('other-images-preview', otherImagesPreviewEdit, (i) => removeImageDB(id, otherImagesPreviewEdit[i].public_id), true);
+    } else {
+        document.getElementById('other-images-preview').innerHTML = '';
+    }
+
+    document.getElementById('editImagesForm').setAttribute('data-id', id);
     Swal.close();
-
     showModal('editImagesModal');
   }
 
   async function removeImageDB(id, public_id) {
-    // Confirm delete
-    const result = await Swal.fire({
-      title: 'Xác nhận xóa ảnh',
-      text: 'Bạn có chắc chắn muốn xóa ảnh này? Hành động này không thể hoàn tác',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-    });
+    showConfirmDialog(
+      'Bạn có chắc chắn muốn xóa ảnh này? Hành động này không thể hoàn tác',
+      async () => {
+        showLoading('Đang xóa...');
 
-    if (result.isConfirmed) {
-      // Show loading spinner
-      Swal.fire({
-        title: 'Đang xóa...',
-        showConfirmButton: false,
-        willOpen: async () => {
-          Swal.showLoading();
-        },
-      });
-    } else {
-      return;
-    }
-
-    // // Fetch product by id
-    // const res = await fetch(`/api/product/${id}`);
-    // const product = await res.json();
-
-    // // Remove image from database
-    // const res2 = await fetch(`/api/product/${id}/image`, {
-    //   method: 'DELETE',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ public_id }),
-    // });
-
-    const data = { success: true };
-    if (data.success) {
-      showSuccessNotification('Xóa ảnh thành công');
-
-      const img = document.getElementById("img-" + public_id);
-      img.remove();
-
-    } else {
-      // SweetAlert2
-      showErrorNotification('Xóa ảnh thất bại', data.message);
-    }
+        const res = await fetch(`/api/product/${id}/image?publicId=${public_id}`, {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'},
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+          showSuccessNotification('Xóa ảnh thành công');
+          // Update otherImagesPreviewEdit array
+          otherImagesPreviewEdit = otherImagesPreviewEdit.filter(img => img.public_id !== public_id);
+          // Re-render the preview
+          renderPreview('other-images-preview', otherImagesPreviewEdit, (i) => removeImageDB(id, otherImagesPreviewEdit[i].public_id), true);
+        } else {
+          showErrorNotification('Xóa ảnh thất bại', data.message);
+        }
+      }
+    );
   }
 
   async function changePage(page = 1) {
@@ -1112,4 +986,73 @@
       pagination.appendChild(next);
     }
   }
+
+  function handleImageUpload(event, productId, isProfile = false) {
+    showConfirmDialog(
+      isProfile ? 'Cập nhật ảnh đại diện?' : 'Thêm ảnh mới?',
+      async () => {
+        showLoading('Đang tải...');
+        const formData = new FormData();
+        const files = Array.from(event.target.files);
+        files.forEach((file) => formData.append(isProfile ? 'profile_image' : 'images', file));
+
+        try {
+          const response = await fetch(`/api/product/${productId}/${isProfile ? 'profile-image' : 'image'}`, {
+            method: isProfile ? 'PUT' : 'POST',
+            body: formData,
+          });
+          const data = await response.json();
+          if (data.success) {
+            showSuccessNotification(isProfile ? 'Cập nhật ảnh đại diện thành công' : 'Thêm ảnh mới thành công');
+            
+            if (isProfile) {
+              // Update profile image preview in edit modal
+              renderPreview('profile-image-preview', [{url: data.image.url}], null, true);
+              
+              // Update profile image in product table
+              const productRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+              if (productRow) {
+                const imgElement = productRow.querySelector('td:nth-child(2) img');
+                if (imgElement) {
+                  imgElement.src = data.image.url;
+                }
+              } else {
+                // If row not found, refresh the whole table
+                fetchFilterProducts(1);
+              }
+            } else {
+              // Add new images to existing array
+              otherImagesPreviewEdit = [...otherImagesPreviewEdit, ...data.images];
+              renderPreview('other-images-preview', otherImagesPreviewEdit, 
+                (i) => removeImageDB(productId, otherImagesPreviewEdit[i].public_id), true);
+            }
+          } else {
+            showErrorNotification('Thất bại', data.message);
+          }
+        } catch (error) {
+          showErrorNotification('Có lỗi xảy ra', error.message);
+        }
+      }
+    );
+  }
+
+  // Update event listeners to use handleImageUpload
+  document.getElementById('profile-image').addEventListener('change', (e) => {
+    const productId = document.getElementById('editImagesForm').getAttribute('data-id');
+    handleImageUpload(e, productId, true);
+  });
+
+  document.getElementById('other-images').addEventListener('change', (e) => {
+    const productId = document.getElementById('editImagesForm').getAttribute('data-id');
+    handleImageUpload(e, productId, false);
+  });
+
+  // Event listner for editImagesButton
+  document
+    .getElementById('editImagesButton')
+    .addEventListener('click', (e) => {
+      e.preventDefault();
+      hideModal('editImagesModal');
+    });
+
 </script>

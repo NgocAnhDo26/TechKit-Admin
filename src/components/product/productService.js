@@ -238,7 +238,7 @@ function formatProducts(products) {
     graphic_card: product.graphic_card,
     description: product.description,
     profile_img: getImage(
-      product.product_image.find((img) => img.is_profile_img).public_id,
+      product.product_image.find((img) => img.is_profile_img)?.public_id,
     ),
     images: product.product_image
       .filter((img) => !img.is_profile_img)
@@ -306,4 +306,142 @@ export async function updateProduct(id, data) {
   });
 
   return { success: true };
+}
+
+// Update product profile image
+export async function updateProductProfileImage(id, image) {
+  const product = await prisma.product.findUnique({
+    where: {
+      id: Number(id),
+    },
+    select: {
+      id: true,
+      product_image: {
+        select: { public_id: true },
+        where: { is_profile_img: true },
+      },
+    },
+  });
+
+  if (!product) {
+    return { success: false, message: 'Sản phẩm không tồn tại' };
+  }
+
+  try {
+    // Upload new image to cloudinary
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: 'TechKit/product' }, (error, result) => {
+          if (error) reject(error);
+          resolve(result);
+        })
+        .end(image.buffer);
+    });
+
+    // Delete old image from cloudinary
+    await cloudinary.uploader.destroy(product.product_image[0].public_id);
+
+    // Update product profile image
+    await prisma.product_image.updateMany({
+      where: {
+        product_id: Number(id),
+        is_profile_img: true,
+      },
+      data: {
+        public_id: result.public_id,
+      },
+    });
+
+    const resultImage = getImage(result.public_id);
+    return { success: true, image: resultImage };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Cập nhật ảnh đại diện không thành công',
+    };
+  }
+}
+
+// Delete product image
+export async function deleteProductImage(id, publicId) {
+  const product = await prisma.product.findUnique({
+    where: {
+      id: Number(id),
+    },
+    select: {
+      id: true,
+      product_image: {
+        select: { public_id: true },
+      },
+    },
+  });
+
+  if (!product) {
+    return { success: false, message: 'Sản phẩm không tồn tại' };
+  }
+
+  try {
+    // Delete image from cloudinary
+    await cloudinary.uploader.destroy(publicId);
+    // Delete image from database
+    await prisma.product_image.delete({
+      where: {
+        product_id_public_id: {
+          product_id: Number(id),
+          public_id: publicId,
+        },
+      },
+    });
+  } catch (error) {
+    return { success: false, message: 'Xóa ảnh không thành công' };
+  }
+
+  return { success: true };
+}
+
+// Upload product images
+export async function uploadProductImages(id, images) {
+  const product = await prisma.product.findUnique({
+    where: {
+      id: Number(id),
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!product) {
+    return { success: false, message: 'Sản phẩm không tồn tại' };
+  }
+
+  let resultImages = [];
+  try {
+    // Upload images to cloudinary
+    await Promise.all(
+      images.map(async (image) => {
+        const result = await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream({ folder: 'TechKit/product' }, (error, result) => {
+              if (error) reject(error);
+              resolve(result);
+            })
+            .end(image.buffer);
+        });
+
+        await prisma.product_image.create({
+          data: {
+            product_id: Number(id),
+            public_id: result.public_id,
+            is_profile_img: false,
+          },
+        });
+
+        resultImages.push(getImage(result.public_id));
+      }),
+    );
+  } catch (error) {
+    return { success: false, message: 'Upload ảnh không thành công' };
+  }
+
+  return { success: true, images: resultImages };
 }

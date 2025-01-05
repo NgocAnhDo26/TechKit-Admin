@@ -695,7 +695,7 @@
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          Swal.close();
+          hideLoading();
           showSuccessNotification('Thêm sản phẩm thành công');
           closeAddProduct(); // Remove event parameter
         } else {
@@ -740,7 +740,7 @@
   function openAddProductModal() {
     showLoading();
     initializeDropdowns().then(() => {
-      Swal.close();
+      hideLoading();
       showModal('addProductModal');
     });
   }
@@ -884,8 +884,7 @@
       }
     };
 
-    // Hide loading spinner
-    Swal.close();
+    hideLoading();
 
     showModal('editProductModal');
   }
@@ -915,7 +914,7 @@
     }
 
     document.getElementById('editImagesForm').setAttribute('data-id', id);
-    Swal.close();
+    hideLoading();
     showModal('editImagesModal');
   }
 
@@ -946,45 +945,7 @@
 
   async function changePage(page = 1) {
     const pageDetail = await fetchFilterProducts(page);
-
-    // Adjust pagination
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-  
-    // Previous button
-    if (pageDetail.currentPage > 1) {
-      const prev = document.createElement('button');
-      prev.innerText = 'Trang trước';
-      prev.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
-      prev.onclick = () => changePage(pageDetail.currentPage - 1);
-      pagination.appendChild(prev);
-    }
-
-    const startPage = Math.max(1, pageDetail.currentPage - 2);
-    const endPage = Math.min(pageDetail.totalPage, startPage + 4);
-
-    // Render numbered page buttons
-    for (let i = startPage; i <= endPage; i++) {
-      const button = document.createElement('button');
-      button.innerText = i;
-      button.onclick = () => changePage(i);
-      if (i === pageDetail.currentPage) {
-        button.disabled = true;
-        button.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
-      } else {
-        button.classList.add('rounded', 'border', 'border-blue-500', 'py-2', 'px-4', 'text-blue-500', 'focus:outline-none', 'hover:bg-blue-500', 'hover:text-white');
-      }
-      pagination.appendChild(button);
-    }
-
-    // Render the Next button only if the currentPage is less than totalPage
-    if (pageDetail.currentPage < pageDetail.totalPage) {
-      const next = document.createElement('button');
-      next.innerText = 'Trang sau';
-      next.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
-      next.onclick = () => changePage(pageDetail.currentPage + 1);
-      pagination.appendChild(next);
-    }
+    renderPagination('pagination', pageDetail.currentPage, pageDetail.totalPage, changePage);
   }
 
   function handleImageUpload(event, productId, isProfile = false) {

@@ -2,32 +2,32 @@
 <aside class="w-fit bg-gray-800 p-4 text-white">
   <h1 class="mb-8 text-2xl font-bold text-center">TechKit Dashboard</h1>
   <nav class="flex flex-col">
-      <a href="/account" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+      <a href="/account" onclick="showLoading('Đang tải trang quản lý tài khoản...')" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-user fa-md"></i>
         Quản lý tài khoản
       </a>
-      <a href="/product" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+      <a href="/product" onclick="showLoading('Đang tải trang quản lý sản phẩm...')" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-boxes-stacked fa-md"></i>
         Quản lý sản phẩm
       </a>
       
-      <a href="/product" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+      <a href="/product" onclick="showLoading('Đang tải trang sản phẩm...')" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-box fa-sm mr-2"></i>
         Sản phẩm
       </a>
-      <a href="/category" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+      <a href="/category" onclick="showLoading('Đang tải trang danh mục...')" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-tag fa-sm mr-2"></i>
         Danh mục sản phẩm
       </a>
-      <a href="/brand" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
+      <a href="/brand" onclick="showLoading('Đang tải trang nhà sản xuất...')" class="text-sm ml-10 p-2 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-industry fa-sm mr-2"></i>
         Nhà sản xuất
       </a>
-      <a href="/order" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+      <a href="/order" onclick="showLoading('Đang tải trang quản lý đơn hàng...')" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-truck-fast fa-sm"></i>
         Quản lý đơn hàng
       </a>
-      <a href="/report" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
+      <a href="/report" onclick="showLoading('Đang tải trang báo cáo thống kê...')" class="flex py-3 px-4 items-center gap-3 hover:bg-gray-700 rounded-md">
         <i class="fa-solid fa-chart-simple fa-md"></i>
         Báo cáo thống kê
       </a>

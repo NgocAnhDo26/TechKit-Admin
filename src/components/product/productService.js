@@ -100,3 +100,15 @@ export async function createProduct(data, images) {
 
   return { success: true };
 }
+
+export async function getCategoriesAndBrands() {
+  const categories = await prisma.category.findMany({
+    select: { name: true },
+  });
+
+  const brands = await prisma.brand.findMany({
+    select: { name: true },
+  });
+
+  return { categories, brands };
+}

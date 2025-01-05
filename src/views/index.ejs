@@ -31,6 +31,26 @@
       function hideModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
       }
+      function showSuccessNotification(type) {
+        // SweetAlert2
+        Swal.fire({
+          icon: 'success',
+          title: type,
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
+      function showErrorNotification(type, message) {
+        Swal.fire({
+          icon: 'error',
+          title: type,
+          text: message,
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
     </script>
   </body>
 </html>

@@ -47,13 +47,12 @@
         <label class="mb-2 block text-sm font-bold text-gray-700" for="brand">
           Brand
         </label>
-        <input
+        <select
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
           id="brand"
-          type="text"
-          placeholder="Brand"
-          required
-        />
+        >
+          <!-- Options will be dynamically added -->
+        </select>
       </div>
       <div class="mb-4">
         <label
@@ -62,13 +61,12 @@
         >
           Category
         </label>
-        <input
+        <select
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
           id="category"
-          type="text"
-          placeholder="Category"
-          required
-        />
+        >
+          <!-- Options will be dynamically added -->
+        </select>
       </div>
       <div class="mb-4">
         <label class="mb-2 block text-sm font-bold text-gray-700" for="storage">
@@ -222,6 +220,7 @@
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
           id="status"
         >
+          <option value="">Select Status</option>
           <option value="on stock">On Stock</option>
           <option value="out of stock">Out of Stock</option>
           <option value="suspend">Suspend</option>
@@ -362,24 +361,11 @@
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          // SweetAlert2
-          Swal.fire({
-            icon: 'success',
-            title: 'Sản phẩm đã được thêm thành công',
-            timer: 2000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-          });
+          showSuccessNotification('Thêm sản phẩm thành công');
         } else {
           // SweetAlert2
-          Swal.fire({
-            icon: 'error',
-            title: 'Thêm sản phẩm thất bại',
-            text: data.message,
-            timer: 2000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-          });
+          showErrorNotification('Thêm sản phẩm thất bại', data.message);
+          return;
         }
       });
     // renderProducts();
@@ -403,4 +389,42 @@
   document
     .getElementById('addProductForm')
     .addEventListener('submit', addProduct);
+
+  // Initialize dropdowns for brand and category
+  async function initializeDropdowns() {
+    try {
+      const response = await fetch('/api/product/categories-brands');
+      const data = await response.json();
+
+      const brandSelect = document.getElementById('brand');
+      const categorySelect = document.getElementById('category');
+
+      // Clear existing options
+      brandSelect.innerHTML = '<option value="">Select Brand</option>';
+      categorySelect.innerHTML = '<option value="">Select Category</option>';
+
+      // Add brand options
+      data.brands.forEach((brand) => {
+        brandSelect.innerHTML += `<option value="${brand.name}">${brand.name}</option>`;
+      });
+
+      // Add category options
+      data.categories.forEach((category) => {
+        categorySelect.innerHTML += `<option value="${category.name}">${category.name}</option>`;
+      });
+    } catch (error) {
+      console.error('Failed to load categories and brands:', error);
+    }
+  }
+
+  // Call initialization when page loads
+  document.addEventListener('DOMContentLoaded', initializeDropdowns);
+
+  // Add modal show listener to refresh dropdowns
+  function showModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    if (modalId === 'addProductModal') {
+      initializeDropdowns();
+    }
+  }
 </script>

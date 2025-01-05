@@ -4,7 +4,7 @@ async function fetchAccountsByQuery(query) {
     const {
         name,
         email,
-        isBanned, 
+        isBanned,
         sortBy,
         sortOrder,
         page = 1,
@@ -51,13 +51,12 @@ async function fetchAccountsByQuery(query) {
                 id: true,
                 name: true,
                 email: true,
-                password: true,
                 address: true,
                 birthdate: true,
                 sex: true,
                 create_time: true,
                 is_admin: true,
-                is_lock: true // Include the is_lock field
+                is_lock: true
             }
         });
 
@@ -73,68 +72,38 @@ async function fetchAccountsByQuery(query) {
     }
 }
 
-async function banAccountByID(account_id) {
+async function toggleBanAccountByID(account_id) {
     try {
-        // Check if the account exists and is not already banned
+        // Check if the account exists
         const account = await prisma.account.findUnique({
-            where: { id: account_id },
-            select: { id: true, is_lock: true }
+            where: { id: Number(account_id) },
+            select: { id: true, is_lock: true },
         });
 
         if (!account) {
             return { success: false, message: 'No account found' };
         }
 
-        if (account.is_lock === 1) {
-            return { success: false, message: 'Account is already banned'};
-        }    
+        // Toggle the account's locked status
+        const newLockStatus = account.is_lock ? false : true;  // Toggle between true and false
 
-        // Update the account's status to banned (is_lock = 1)
+        // Update the account's status
         await prisma.account.update({
             where: { id: account_id },
             data: {
-                is_lock: 1
-            }
+                is_lock: newLockStatus,
+            },
         });
-        return { success: true,message: 'Account successfully banned' };
+
+        const action = newLockStatus ? 'banned' : 'unbanned';
+        return { success: true, message: `Account successfully ${action}` };
     } catch (error) {
-        console.error('Error banning account:', error);
-        return { success: false, message: 'Internal server error'};
-    }
-}
-
-async function unbanAccountByID(account_id) {
-    try {
-        // Check if the account exists and is not already banned
-        const account = await prisma.account.findUnique({
-            where: { id: account_id },
-            select: { id: true, is_lock: true }
-        });
-
-        if (!account) {
-            return { success: false, message: 'No account found' };
-        }
-
-        if (account.is_lock === 0) {
-            return { success: false, message: 'Account is not banned'};
-        }    
-
-        // Update the account's status to banned (is_lock = 1)
-        await prisma.account.update({
-            where: { id: account_id },
-            data: {
-                is_lock: 0
-            }
-        });
-        return { success: true,message: 'Account successfully unbanned' };
-    } catch (error) {
-        console.error('Error unbanning account:', error);
-        return { success: false, message: 'Internal server error'};
+        console.error('Error toggling account ban status:', error);
+        return { success: false, message: 'Internal server error' };
     }
 }
 
 export {
     fetchAccountsByQuery,
-    banAccountByID,
-    unbanAccountByID
+    toggleBanAccountByID
 };

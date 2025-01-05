@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
 export async function renderAccountPage(req, res) {
   try {
     const result = await accountService.fetchAccountsByQuery(req.query);
+    // console.log(result);
     res.status(200).render('index', { section: 'account', accounts: result });
   } catch (error) {
     console.error('Error fetching accounts:', error);
@@ -24,27 +25,27 @@ export async function renderAccountPage(req, res) {
   }
 }
 
-// POST /ban - Ban an account
+// POST /ban - Toggle ban status of an account
 router.post('/ban', async (req, res) => {
   try {
     const { account_id } = req.body;
-
+    console.log(account_id);
     if (!account_id) {
       return res.status(400).json({
         success: false,
-        message: 'Account ID is required',
+        message: 'Thiếu ID của tài khoản',
       });
     }
 
-    // Prevent banning the currently logged-in user
-    if (account_id === req.user.id) {
+    if (account_id === 55) {
       return res.status(403).json({
         success: false,
-        message: 'You cannot ban your own account',
+        message: 'Không thể thay đổi khóa của chính mình',
       });
     }
 
-    const result = await banAccountByID(account_id);
+    // Use the toggleBanAccountByID service to toggle the account ban status
+    const result = await accountService.toggleBanAccountByID(account_id);
 
     if (!result.success) {
       return res.status(400).json(result);
@@ -52,35 +53,7 @@ router.post('/ban', async (req, res) => {
 
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error banning account:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-    });
-  }
-});
-
-// POST /unban - Unban an account
-router.post('/unban', async (req, res) => {
-  try {
-    const { account_id } = req.body;
-
-    if (!account_id) {
-      return res.status(400).json({
-        success: false,
-        message: 'Account ID is required',
-      });
-    }
-
-    const result = await unbanAccountByID(account_id);
-
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Error unbanning account:', error);
+    console.error('Error toggling account ban status:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',

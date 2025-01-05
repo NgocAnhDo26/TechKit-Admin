@@ -1,80 +1,158 @@
 <!-- Account Management Section -->
 <section id="account">
   <h2 class="mb-4 text-2xl font-bold">Account Management</h2>
-  <button
-    onclick="showModal('addAccountModal')"
-    class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
-  >
+  <!-- <button onclick="showModal('addAccountModal')"
+    class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700">
     Add New Account
-  </button>
+  </button> -->
+  <!-- Filter Form, including search by name, filter by category, brand and sort by -->
+  <form class="mb-4 text-sm">
+    <div class="flex gap-4 items-center">
+      <input id="account-search-name"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+        type="text" placeholder="Tìm kiếm theo tên" />
+      <input id="account-search-email"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+        type="text" placeholder="Tìm kiếm theo email" />
+      <button type="button" id="account-filter-button"
+        class="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none">
+        Lọc
+      </button>
+
+      <p class="flex-1 text-end">Sắp xếp: </p>
+      <select id="account-sort"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none">
+        <option value="default">Mặc định</option>
+        <option value="create_time-desc">Ngày tạo: Mới nhất</option>
+        <option value="create_time-asc">Ngày tạo: Cũ nhất</option>
+        <option value="name-asc">Tên: tăng dần</option>
+        <option value="name-desc">Tên: giảm dần</option>
+      </select>
+    </div>
+  </form>
   <table class="min-w-full bg-white">
     <thead>
       <tr>
         <th class="border-b py-2 px-4">ID</th>
-        <th class="border-b py-2 px-4">Username</th>
+        <th class="border-b py-2 px-4">Tên Người Dùng</th>
         <th class="border-b py-2 px-4">Email</th>
-        <th class="border-b py-2 px-4">Role</th>
-        <th class="border-b py-2 px-4">Actions</th>
+        <th class="border-b py-2 px-4">Vai Trò</th>
+        <th class="border-b py-2 px-4">Ngày Tạo</th>
+        <th class="border-b py-2 px-4">Hành Động</th>
       </tr>
     </thead>
     <tbody id="accountTableBody">
-      <!-- Account rows will be dynamically added here -->
+      <% if (accounts && accounts.accounts.length> 0) { %>
+        <% accounts.accounts.forEach(account=> { %>
+          <tr>
+            <td class="py-2 px-4 border-b text-center">
+              <%= account.id %>
+            </td>
+            <td class="py-2 px-4 border-b text-center">
+              <%= account.name %>
+            </td>
+            <td class="py-2 px-4 border-b text-center">
+              <%= account.email %>
+            </td>
+            <td class="py-2 px-4 border-b text-center">
+              <%= account.is_admin ? 'Admin' : 'User' %>
+            </td>
+            <td class="py-2 px-4 border-b text-center">
+              <%= new Date(account.create_time).toLocaleDateString('en-GB', { day: '2-digit' , month: '2-digit' ,
+                year: 'numeric' , }) %>
+                <%= new Date(account.create_time).toLocaleTimeString('en-US', { hour: '2-digit' , minute: '2-digit' ,
+                  second: '2-digit' , }) %>
+            </td>
+            <td class="py-2 px-4 border-b flex items-center justify-center">
+              <button onclick="viewAccount(<%= account.id %>)"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">View</button>
+              <button onclick="toggleBanAccount(<%= account.id %>)"
+                class="<%= account.is_lock ? 'bg-blue-500 hover:bg-blue-700' : 'bg-red-500 hover:bg-yellow-700' %> text-white font-bold py-1 px-2 rounded">
+                <%= account.is_lock ? 'Unban' : 'Ban' %>
+              </button>
+            </td>
+          </tr>
+          <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="py-4 text-center">No accounts found.</td>
+              </tr>
+              <% } %>
     </tbody>
   </table>
+  <!-- Product paging (include at most 5 numbers at once) -->
+  <div id="account-pagination" class="flex justify-center gap-2 mt-5 text-sm">
+    <% if (accounts.currentPage > 1) { %>
+      <button
+        type="button"
+        data-page="<%= accounts.currentPage - 1 %>"
+        class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
+        onclick="changeAccountPage(<%= accounts.currentPage - 1 %>)"
+      >
+        Trang trước
+      </button>
+    <% } %>
+    
+    <% 
+      const startPage = Math.max(1, accounts.currentPage - 2);
+      const endPage = Math.min(accounts.totalPage, startPage + 4);
+    %>
+
+    <!-- Render numbered page buttons -->
+    <% for (let i = startPage; i <= endPage; i++) { %>
+        <button
+          type="button"
+          data-page="<%= i %>"
+          class="page-btn rounded border py-2 px-4 hover:bg-blue-700 focus:outline-none <%= i === accounts.currentPage ? 'bg-blue-500 text-white' : 'border-blue-500 text-blue-500 hover:text-white' %>"
+          onclick="changeAccountPage(<%= i %>)"
+          <%= data.currentPage === i ? 'disabled' : '' %>
+        >
+          <%= i %>
+        </button>
+    <% } %>
+
+    <!-- Render the Next button only if the currentPage is less than totalPage -->
+    <% if (accounts.currentPage < accounts.totalPage) { %>
+      <button
+        type="button"
+        data-page="<%= accounts.currentPage + 1 %>"
+        class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
+        onclick="changeAccountPage(<%= accounts.currentPage + 1 %>)"
+        >
+          Trang sau
+        </button>
+    <% } %>
+  </div>
 </section>
 
 <!-- Add Account Modal -->
-<div
-  id="addAccountModal"
-  class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
->
-  <div
-    class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
-  >
+<!-- <div id="addAccountModal" class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
+  <div class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
     <h3 class="mb-4 text-lg font-bold">Add New Account</h3>
     <form id="addAccountForm">
       <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="accountUsername"
-        >
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="accountUsername">
           Username
         </label>
         <input
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="accountUsername"
-          type="text"
-          placeholder="Username"
-          required
-        />
+          id="accountUsername" type="text" placeholder="Username" required />
       </div>
       <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="accountEmail"
-        >
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="accountEmail">
           Email
         </label>
         <input
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="accountEmail"
-          type="email"
-          placeholder="Email"
-          required
-        />
+          id="accountEmail" type="email" placeholder="Email" required />
       </div>
       <div class="mb-4">
-        <label
-          class="mb-2 block text-sm font-bold text-gray-700"
-          for="accountRole"
-        >
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="accountRole">
           Role
         </label>
         <select
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-          id="accountRole"
-          required
-        >
+          id="accountRole" required>
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
@@ -82,38 +160,119 @@
       <div class="flex items-center justify-between">
         <button
           class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-          type="submit"
-        >
+          type="submit">
           Add Account
         </button>
         <button
           class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
-          type="button"
-          onclick="hideModal('addAccountModal')"
-        >
+          type="button" onclick="hideModal('addAccountModal')">
           Cancel
         </button>
       </div>
     </form>
   </div>
-</div>
+</div> -->
 
 <script>
-  // Use this for AJAX requests
-  function renderAccounts() {
+  // // Account management
+  // let accounts = [
+  //   {
+  //     id: 1,
+  //     username: 'john_doe',
+  //     email: 'john@example.com',
+  //     role: 'admin',
+  //   },
+  //   {
+  //     id: 2,
+  //     username: 'jane_smith',
+  //     email: 'jane@example.com',
+  //     role: 'user',
+  //   },
+  // ];
+
+  // Event listener for filter button
+  document.getElementById('account-filter-button').addEventListener('click', changeAccountPage);
+
+  // Event listener for sorting
+  document.getElementById('account-sort').addEventListener('change', changeAccountPage);
+
+  async function changeAccountPage(page = 1) {
+    const pageDetail = await fetchFilterAccounts(page);
+
+    // Adjust pagination
+    const pagination = document.getElementById('account-pagination');
+    pagination.innerHTML = '';
+  
+    // Previous button
+    if (pageDetail.currentPage > 1) {
+      const prev = document.createElement('button');
+      prev.innerText = 'Trang trước';
+      prev.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
+      prev.onclick = () => changeAccountPage(pageDetail.currentPage - 1);
+      pagination.appendChild(prev);
+    }
+
+    const startPage = Math.max(1, pageDetail.currentPage - 2);
+    const endPage = Math.min(pageDetail.totalPage, startPage + 4);
+
+    // Render numbered page buttons
+    for (let i = startPage; i <= endPage; i++) {
+      const button = document.createElement('button');
+      button.innerText = i;
+      button.onclick = () => changeAccountPage(i);
+      if (i === pageDetail.currentPage) {
+        button.disabled = true;
+        button.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
+      } else {
+        button.classList.add('rounded', 'border', 'border-blue-500', 'py-2', 'px-4', 'text-blue-500', 'focus:outline-none', 'hover:bg-blue-500', 'hover:text-white');
+      }
+      pagination.appendChild(button);
+    }
+
+    // Render the Next button only if the currentPage is less than totalPage
+    if (pageDetail.currentPage < pageDetail.totalPage) {
+      const next = document.createElement('button');
+      next.innerText = 'Trang sau';
+      next.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
+      next.onclick = () => changeAccountPage(pageDetail.currentPage + 1);
+      pagination.appendChild(next);
+    }
+  }
+
+  function renderAccounts(accounts) {
     const tableBody = document.getElementById('accountTableBody');
     tableBody.innerHTML = '';
     accounts.forEach((account) => {
+      const createTimeFormatted = new Date(account.create_time).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }); // Format the date
+
+      const createTimeFormattedTime = new Date(account.create_time).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }); // Format the time
+      const fullCreateTime = `${createTimeFormatted} ${createTimeFormattedTime}`;
       const row = `
                     <tr>
-                        <td class="py-2 px-4 border-b">${account.id}</td>
-                        <td class="py-2 px-4 border-b">${account.username}</td>
-                        <td class="py-2 px-4 border-b">${account.email}</td>
-                        <td class="py-2 px-4 border-b">${account.role}</td>
-                        <td class="py-2 px-4 border-b">
-                            <button onclick="editAccount(${account.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
-                            <button onclick="deleteAccount(${account.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
-                            <button onclick="toggleBanAccount(${account.id})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Ban</button>
+                        <td class="py-2 px-4 border-b text-center">${account.id}</td>
+                        <td class="py-2 px-4 border-b text-center">${account.name}</td>
+                        <td class="py-2 px-4 border-b text-center">${account.email}</td>
+                        <td class="py-2 px-4 border-b text-center">${account.is_admin ? 'Admin' : 'User'}</td>
+                        <td class="py-2 px-4 border-b text-center">${fullCreateTime}</td>
+                        <td class="py-2 px-4 border-b flex items-center justify-center">
+                            <button onclick="viewAccount(${account.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">View</button>
+                            <button
+                              onclick="toggleBanAccount(${account.id})"
+                              class="${
+                                account.is_lock === true  // Ensure strict comparison for true
+                                  ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+                                  : 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded'
+                              }">
+                              ${account.is_lock === true ? 'Unban' : 'Ban'}  <!-- Ensure strict comparison for true -->
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -121,57 +280,124 @@
     });
   }
 
-  // Account management
-  let accounts = [
-    {
-      id: 1,
-      username: 'john_doe',
-      email: 'john@example.com',
-      role: 'admin',
-    },
-    {
-      id: 2,
-      username: 'jane_smith',
-      email: 'jane@example.com',
-      role: 'user',
-    },
-  ];
+  async function fetchFilterAccounts(page) {
+    const sort = document.getElementById('account-sort').value;
+    const name = document.getElementById('account-search-name').value;
+    const email = document.getElementById('account-search-email').value;
+    // Build query string
+    let queryString = new URLSearchParams();
+    if (sort && sort !== 'default') {
+      const [field, order] = sort.split('-');
+      queryString.append('sortBy', field);
+      queryString.append('sortOrder', order);
+    }
+    if (name) queryString.append('name', name);
+    if (email) queryString.append('email', email);
+    console.log(queryString.toString());
+    const res = await fetch(`/api/account?${queryString.toString()}`)
+    const data = await res.json();
+    renderAccounts(data.accounts);
 
-  function addAccount(event) {
-    event.preventDefault();
-    const username = document.getElementById('accountUsername').value;
-    const email = document.getElementById('accountEmail').value;
-    const role = document.getElementById('accountRole').value;
-    const newAccount = {
-      id: accounts.length + 1,
-      username: username,
-      email: email,
-      role: role,
-    };
-    accounts.push(newAccount);
-    renderAccounts();
-    hideModal('addAccountModal');
-    event.target.reset();
+    return {currentPage: data.currentPage, totalPage: data.totalPage};
   }
 
-  function editAccount(id) {
-    // Implement edit functionality
-    console.log('Edit account', id);
-  }
+  async function toggleBanAccount(accountId) {
+  try {
+    const response = await fetch('/api/account/ban', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ account_id: accountId }),
+    });
 
-  function deleteAccount(id) {
-    accounts = accounts.filter((account) => account.id !== id);
-    renderAccounts();
-  }
+    const result = await response.json();
 
-  // ban/unban account
-  function toggleBanAccount(id) {
-    accounts = accounts.filter((account) => account.id !== id);
-    renderAccounts();
-  }
+    // Check if the request was successful
+    if (result.success) {
+      // Toggle the button's class and text based on the new status
+      const button = document.querySelector(`button[onclick="toggleBanAccount(${accountId})"]`);
+      if (result.message === 'Account successfully banned') {
+        button.classList.remove('bg-red-500', 'hover:bg-yellow-700');
+        button.classList.add('bg-blue-500', 'hover:bg-blue-700');
+        button.innerText = 'Unban';
+        await Swal.fire({
+          icon: 'success',
+          title: 'Người dùng đã bị khóa',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      } else if (result.message === 'Account successfully unbanned') {
+        button.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+        button.classList.add('bg-red-500', 'hover:bg-yellow-700');
+        button.innerText = 'Ban';
+        await Swal.fire({
+          icon: 'success',
+          title: 'Người dùng đã được mở khỏa',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
 
-  // Add event listener for the account form
-  document
-    .getElementById('addAccountForm')
-    .addEventListener('submit', addAccount);
+    } else {
+      await Swal.fire({
+          icon: 'error',
+          title: 'Thất bại',
+          text: result.message,
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+    }
+  } catch (error) {
+    console.error('Error toggling account ban status:', error);
+    await Swal.fire({
+          icon: 'error',
+          title: 'Đã có lỗi xảy ra',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+  }
+}
+
+  // function addAccount(event) {
+  //   event.preventDefault();
+  //   const username = document.getElementById('accountUsername').value;
+  //   const email = document.getElementById('accountEmail').value;
+  //   const role = document.getElementById('accountRole').value;
+  //   const newAccount = {
+  //     id: accounts.length + 1,
+  //     username: username,
+  //     email: email,
+  //     role: role,
+  //   };
+  //   accounts.push(newAccount);
+  //   renderAccounts();
+  //   hideModal('addAccountModal');
+  //   event.target.reset();
+  // }
+
+  // function editAccount(id) {
+  //   // Implement edit functionality
+  //   console.log('Edit account', id);
+  // }
+
+  // function deleteAccount(id) {
+  //   accounts = accounts.filter((account) => account.id !== id);
+  //   renderAccounts();
+  // }
+
+  // // ban/unban account
+  // function toggleBanAccount(id) {
+  //   accounts = accounts.filter((account) => account.id !== id);
+  //   renderAccounts();
+  // }
+
+  // // Add event listener for the account form
+  // document
+  //   .getElementById('addAccountForm')
+  //   .addEventListener('submit', addAccount);
 </script>

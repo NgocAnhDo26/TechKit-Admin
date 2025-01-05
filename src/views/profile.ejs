@@ -23,7 +23,7 @@
 
             <div class="flex flex-col gap-2 lg:w-1/2">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="border border-gray-300 rounded-md p-2 opacity-60"
+                <input type="email" id="profile-email" name="email" class="border border-gray-300 rounded-md p-2 opacity-60"
                     value="<%= account.email %>" readonly />
             </div>
 
@@ -56,12 +56,12 @@
                         
 
             <button id="update" type="button"
-                class="text-primary border-primary border-2 hover:scale-105 0 rounded-md py-2 px-5 w-fit">
+                class="text-primary bg-blue-500 border-blue-500 border-2 hover:scale-105 0 rounded-md py-2 px-5 w-fit">
                 Cập nhật
             </button>
             <div class="flex gap-5">
                 <button id="apply" type="button"
-                    class="text-primary border-primary border-2 hover:scale-105 rounded-md py-2 px-5 hidden w-fit">
+                    class="text-primary border-blue-500 border-2 hover:scale-105 rounded-md py-2 px-5 hidden w-fit">
                     Áp dụng
                 </button>
             </div>
@@ -92,7 +92,7 @@
     updateButton.addEventListener('click', () => {
         const inputs = document.querySelectorAll('input');
         inputs.forEach((input) => {
-            if (input.id !== 'email') {
+            if (input.id !== 'profile-email') {
                 input.removeAttribute('readonly');
                 input.classList.remove('opacity-60');
             }

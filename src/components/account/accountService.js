@@ -1,4 +1,5 @@
 import { prisma } from '../../config/config.js';
+import { getUrl } from '../util/util.js';
 
 async function fetchAccountsByQuery(query) {
     const {
@@ -72,6 +73,39 @@ async function fetchAccountsByQuery(query) {
     }
 }
 
+async function fetchAccountByID(account_id) {
+    try {
+      // Fetch the account details by account_id
+      const account = await prisma.account.findUnique({
+        where: { id: Number(account_id) },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          address: true,
+          birthdate: true,
+          sex: true,
+          create_time: true,
+          avatar: true,
+          is_lock: true,
+          is_admin: true,
+        },
+      });
+  
+      if (!account) {
+        return {message: 'Account not found' };
+      }
+      account.avatar_url = getUrl(account.avatar)
+  
+      return account;
+    } catch (error) {
+      console.error('Error fetching account by ID:', error);
+      return {message: 'Internal server error' };
+    }
+  }
+  
+
 async function toggleBanAccountByID(account_id) {
     try {
         // Check if the account exists
@@ -105,5 +139,6 @@ async function toggleBanAccountByID(account_id) {
 
 export {
     fetchAccountsByQuery,
+    fetchAccountByID,
     toggleBanAccountByID
 };

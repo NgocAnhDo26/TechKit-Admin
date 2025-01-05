@@ -14,6 +14,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:account_id', async (req, res) => {
+  try {
+    const {account_id} = req.params;
+    const result = await accountService.fetchAccountByID(account_id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+  }
+});
+
 export async function renderAccountPage(req, res) {
   try {
     const result = await accountService.fetchAccountsByQuery(req.query);
@@ -29,7 +40,7 @@ export async function renderAccountPage(req, res) {
 router.post('/ban', async (req, res) => {
   try {
     const { account_id } = req.body;
-    console.log(account_id);
+    // console.log(account_id);
     if (!account_id) {
       return res.status(400).json({
         success: false,
@@ -37,7 +48,7 @@ router.post('/ban', async (req, res) => {
       });
     }
 
-    if (account_id === 55) {
+    if (Number(account_id) === Number(req.user.id)) {
       return res.status(403).json({
         success: false,
         message: 'Không thể thay đổi khóa của chính mình',

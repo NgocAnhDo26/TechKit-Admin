@@ -130,7 +130,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
         console.error('Error uploading avatar:', error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while uploading the avatar.',
+            message: error.message,
             error: error.message,
         });
     }

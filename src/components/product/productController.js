@@ -57,4 +57,55 @@ router.put('/:id', async (req, res) => {
     });
 });
 
+// Update product profile image
+router.put('/:id/profile-image', upload.single('profile_image'), async (req, res) => {
+  productService
+    .updateProductProfileImage(parseInt(req.params.id, 10), req.file)
+    .then((result) => {
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).send(result);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
+// Delete product image
+router.delete('/:id/image', async (req, res) => {
+  productService
+    .deleteProductImage(parseInt(req.params.id, 10), req.query.publicId)
+    .then((result) => {
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).send(result);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
+// Upload product images
+router.post('/:id/image', upload.array('images'), async (req, res) => {
+  productService
+    .uploadProductImages(parseInt(req.params.id, 10), req.files)
+    .then((result) => {
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).send(result);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+    });
+});
+
 export default router;

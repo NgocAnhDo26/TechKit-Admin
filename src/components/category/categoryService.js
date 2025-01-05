@@ -4,9 +4,12 @@ async function fetchAllCategories() {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
-        name: 'asc', // Sort by name in ascending order
+        id: 'asc', // Sort by name in ascending order
       },
-      select: { name: true },
+      select: { 
+        id: true,
+        name: true 
+      },
     });
     return categories;
   } catch (error) {
@@ -22,6 +25,7 @@ async function addCategory(name) {
       where: { name },
     });
 
+    // If the category already exists, throw an error
     if (existingCategory) {
       throw new Error('Category already exists');
     }
@@ -31,14 +35,15 @@ async function addCategory(name) {
       data: { name },
     });
 
+    // Return the newly created category
     return newCategory;
   } catch (error) {
-    console.error('Error adding category:', error);
+    console.error('Error adding category:', error.message || error);
     throw new Error(error.message || 'Failed to add category');
   }
 }
 
-async function deleteCategory(category_id) {
+async function editCategory(category_id, name) {
   try {
     // Check if the category exists
     const existingCategory = await prisma.category.findUnique({
@@ -48,15 +53,46 @@ async function deleteCategory(category_id) {
     if (!existingCategory) {
       throw new Error('Category not found');
     }
-    await prisma.category.delete({
-      where: { id: category_id },
+
+    // Check if the new name is different from the current name
+    if (existingCategory.name === name) {
+      throw new Error('New category name is the same as the current one');
+    }
+
+    // Check if a category with the new name already exists
+    const duplicateCategory = await prisma.category.findUnique({
+      where: { name },
     });
 
-    return { success: true, message: 'Category successfully deleted' };
+    if (duplicateCategory) {
+      throw new Error('Category name already exists');
+    }
+
+    // Update the category with the new name
+    const updatedCategory = await prisma.category.update({
+      where: { id: category_id },
+      data: { name },
+    });
+
+    return updatedCategory;
   } catch (error) {
-    console.error('Error deleting category:', error);
-    throw new Error(error.message || 'Failed to delete category');
+    console.error('Error updating category:', error);
+    throw new Error(error.message || 'Failed to update category');
   }
 }
 
-export { fetchAllCategories, addCategory, deleteCategory };
+
+async function deleteCategory(id) {
+  try {
+      const deletedCategory = await prisma.category.delete({
+          where: { id: id },
+      });
+      return deletedCategory;
+  } catch (error) {
+      console.error('Error deleting category:', error);
+      throw new Error(error.message || 'Failed to delete category');
+  }
+}
+
+
+export { fetchAllCategories, addCategory, deleteCategory, editCategory };

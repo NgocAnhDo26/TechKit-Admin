@@ -25,15 +25,19 @@
         <!-- Main Content -->
         <main class="flex-1 overflow-auto p-8">
           <% if (section === 'account') { %>
-            <%- include('account'); %>
+            <%- include('account',{accounts:accounts}); %>
           <% } else if (section === 'product') { %>
             <%- include('product', {data: data}); %>
+          <% } else if (section === 'category') { %>
+            <%- include('category', {categories: categories}); %>
+          <% } else if (section === 'brand') { %>
+            <%- include('brand', {brands: brands}); %>
           <% } else if (section === 'order') { %>
             <%- include('order'); %>
           <% } else if (section === 'report') { %>
             <%- include('report'); %>
           <% } else { %>
-            <%- include('account'); %>
+            <%- include('account',{accounts:accounts}); %>
           <% } %>
         </main>
       </div>

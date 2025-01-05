@@ -24,11 +24,7 @@ router.get('/', async (req, res) => {
 export async function renderCategoryPage(req, res) {
     try {
         const categories = await categoryService.fetchAllCategories();
-        res.status(200).json({
-            success: true,
-            message: 'Categories fetched successfully',
-            result: categories,
-        });
+        res.status(200).render('index', {section: 'category', categories});
     } catch (error) {
         console.error('Error in GET /category:', error);
         res.status(500).json({
@@ -54,7 +50,7 @@ router.post('/', async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Category added successfully',
-            result: newCategory,
+            category: newCategory,
         });
     } catch (error) {
         console.error('Error in POST /category:', error);
@@ -64,6 +60,28 @@ router.post('/', async (req, res) => {
         });
     }
 });
+
+// POST /category/:category_id - Edit a category
+router.post('/:category_id', async (req, res) => {
+    const { name } = req.body;  // Extract the new name from the request body
+    const { category_id } = req.params;  // Extract the category ID from the URL parameters
+  
+    try {
+      // Call the editCategory service to update the category
+      const updatedCategory = await categoryService.editCategory(Number(category_id), name);
+  
+      // Return the updated category in the response
+      return res.status(200).json({
+        success: true,
+        message: 'Category updated successfully',
+        category: updatedCategory,
+      });
+    } catch (error) {
+      console.error('Error updating category:', error);
+      return res.status(500).json({ success: false,message: error.message || 'Failed to update category' });
+    }
+  });
+  
 
 // DELETE /category/:id - Delete a category by ID
 router.delete('/:id', async (req, res) => {
@@ -75,17 +93,29 @@ router.delete('/:id', async (req, res) => {
             message: 'Category ID is required',
         });
     }
-
+    console.log(id);
     try {
-        const result = await categoryService.deleteCategory(parseInt(id));
-        res.status(200).json(result);
+        // Assuming categoryService.deleteCategory handles deletion
+        const result = await categoryService.deleteCategory(Number(id));
+        if (result) {
+            return res.status(200).json({
+                success: true,
+                message: 'Category deleted successfully',
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: 'Category not found',
+            });
+        }
     } catch (error) {
         console.error('Error in DELETE /category:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: error.message || 'Failed to delete category',
         });
     }
 });
+
 
 export default router;

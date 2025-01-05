@@ -1,5 +1,6 @@
 import express from 'express';
 import { renderCategoryPage } from '../components/category/categoryController.js';
+import { renderBrandPage } from '../components/brand/brandController.js';
 import { renderAccountPage } from '../components/account/accountController.js';
 import authController from '../components/auth/authController.js';
 import { forbidRoute } from '../components/auth/authService.js';
@@ -14,6 +15,8 @@ router.get('/', renderAccountPage);
 router.get('/account', renderAccountPage);
 
 router.use('/category', renderCategoryPage);
+
+router.use('/brand', renderBrandPage);
 
 router.get('/product', async (req, res) => {
   const data = await fetchProductWithQuery(req.query);

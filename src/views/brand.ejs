@@ -1,0 +1,294 @@
+<!-- Brands Management Section -->
+<section id="brand">
+    <h2 class="mb-4 text-2xl font-bold">Quản lý thương hiệu</h2>
+    <button onclick="openAddBrandModal()"
+        class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700">
+        Thêm thương hiệu
+    </button>
+
+    <!-- Brand Table -->
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr class="text-sm">
+                <th class="border-b p-2 px-4">ID</th>
+                <th class="border-b p-2">Tên thương hiệu</th>
+            </tr>
+        </thead>
+        <tbody id="brandTableBody">
+            <!-- Brand rows will be dynamically added here -->
+            <% brands.forEach((brand)=> { %>
+                <tr class="text-sm" brand-id="<%= brand.id %>">
+                    <td class="p-2 px-4 border-b text-center">
+                        <%= brand.id %>
+                    </td>
+                    <td class="p-2 px-4 border-b text-center">
+                        <%= brand.name %>
+                    </td>
+                    <td class="p-2 px-4 border-b flex items-center justify-center">
+                        <button onclick="openEditBrandModal(<%= brand.id %>)"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                        <button onclick="deleteBrand(<%= brand.id %>)"
+                            class="bg-red-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">
+                            Xóa
+                        </button>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
+</section>
+
+<!-- Add Brand Modal -->
+<div id="addBrandModal" class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
+    <div class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
+        <h3 class="mb-4 text-lg font-bold">Thêm thương hiệu mới</h3>
+        <form id="addBrandForm" onsubmit="addBrand(event)">
+            <!-- Basic Info -->
+            <div class="mb-4">
+                <label class="mb-2 block text-sm font-bold text-gray-700" for="brand-name">Tên Thương Hiệu</label>
+                <input
+                    class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                    id="brand-name" type="text" placeholder="Tên Thương Hiệu" required />
+            </div>
+            <!-- Buttons -->
+            <div class="flex items-center justify-between">
+                <button id="addBrandButton"
+                    class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                    type="submit">Thêm Thương Hiệu</button>
+                <button
+                    class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+                    type="button" onclick="closeAddBrand()">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Brand Modal -->
+<div id="editBrandModal" class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
+    <div class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
+        <h3 class="mb-4 text-lg font-bold">Chỉnh sửa thương hiệu</h3>
+        <form id="editBrandForm" onsubmit="editBrand(event)">
+            <div class="mb-4">
+                <label class="mb-2 block text-sm font-bold text-gray-700" for="brand-name-change">Tên Thương
+                    Hiệu</label>
+                <input
+                    class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                    id="brand-name-change" type="text" placeholder="Tên Thương Hiệu" required />
+                <input class="hidden" id="brand-id-change" type="text" />
+            </div>
+            <div class="flex items-center justify-between">
+                <button id="editBrandButton"
+                    class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+                    type="submit">
+                    Lưu
+                </button>
+                <button
+                    class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+                    type="button" onclick="closeEditBrand()">
+                    Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    async function renderBrands() {
+        const response = await fetch('/api/brand');
+        const result = await response.json();
+        const brands = result.result;
+
+        const tableBody = document.getElementById('brandTableBody');
+        tableBody.innerHTML = '';
+
+        brands.forEach(brand => {
+            const row = `
+            <tr class="text-sm" brand-id="${brand.id}">
+                <td class="p-2 px-4 border-b text-center">${brand.id}</td>
+                <td class="p-2 px-4 border-b text-center">${brand.name}</td>
+                <td class="p-2 px-4 border-b flex items-center justify-center">
+                    <button onclick="openEditBrandModal(${brand.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                    <button onclick="deleteBrand(${brand.id})" class="bg-red-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">Xóa</button>
+                </td>
+            </tr>
+        `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function openAddBrandModal() {
+        document.getElementById('addBrandModal').classList.remove('hidden');
+    }
+
+    function closeAddBrand() {
+        document.getElementById('addBrandModal').classList.add('hidden');
+    }
+
+    function openEditBrandModal(brandId) {
+        document.getElementById('editBrandModal').classList.remove('hidden');
+        document.getElementById('brand-id-change').value = brandId;
+    }
+
+    function closeEditBrand() {
+        document.getElementById('editBrandModal').classList.add('hidden');
+    }
+
+    async function addBrand(event) {
+        event.preventDefault();
+        // Get the brand name value from the input
+        const brandName = document.getElementById('brand-name').value;
+        if (!brandName) {
+            alert('Vui lòng nhập tên nhà phát hành.');
+            return;
+        }
+
+        try {
+            // Send a request to your backend to create a new brand
+            const response = await fetch('/api/brand', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: brandName,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Thêm thương hiệu thành công',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+                renderBrands();
+                closeAddBrand();
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: result.message,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            }
+        } catch (error) {
+            console.error('Error adding brand:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Đã có lỗi xảy ra',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        }
+    }
+
+    async function editBrand(event) {
+        event.preventDefault();
+
+        const brandId = document.getElementById('brand-id-change').value;
+        const brandName = document.getElementById('brand-name-change').value;
+
+        try {
+            // Send the updated brand name to the server (via fetch or axios)
+            const response = await fetch(`/api/brand/${brandId}`, {
+                method: 'POST', // Assuming POST method is used for updating. If PUT, change accordingly.
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: brandName }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Sửa thương hiệu thành công',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+                closeEditBrand();
+                renderBrands();
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: result.message,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            }
+        } catch (error) {
+            console.error('Error editing brand:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Đã có lỗi xảy ra',
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        }
+    }
+
+    async function deleteBrand(brandId) {
+        const result = await Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa thương hiệu này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`/api/brand/${brandId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok ) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: 'Thương hiệu đã được xóa.',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                    renderBrands(); // Refresh the category list
+                } else {
+                    const error = await response.json();
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại',
+                        text: error.message,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error) {
+                console.error('Error deleting brand:', error);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Đã xảy ra lỗi khi xóa thương hiệu.',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    }
+
+</script>

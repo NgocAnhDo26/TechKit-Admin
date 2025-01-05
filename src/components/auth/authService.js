@@ -100,22 +100,17 @@ export default passport.use(
 // Authorize for calling api
 export function authorize(req, res, next) {
   if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      message: 'Bạn cần đăng nhập để thực hiện hành động này',
-    });
+    return res
+      .status(401)
+      .send(errorResponse(401, 'Bạn cần đăng nhập để thực hiện hành động này'));
   }
   if (req.user.is_lock) {
-    return res.status(403).json({
-      success: false,
-      message: 'Tài khoản đã bị khóa',
-    });
+    return res.status(403).send(errorResponse(401, 'Tài khoản đã bị khóa'));
   }
   if (!req.user.is_admin) {
-    return res.status(403).json({
-      success: false,
-      message: 'Tài khoản không có quyền truy cập',
-    });
+    return res
+      .status(403)
+      .send(errorResponse(401, 'Tài khoản không có quyền truy cập'));
   }
   return next();
 }

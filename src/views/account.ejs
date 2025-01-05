@@ -64,9 +64,9 @@
                   second: '2-digit' , }) %>
             </td>
             <td class="py-2 px-4 border-b flex items-center justify-center">
-              <button onclick="openViewAccount(<%= account.id %>)"
+              <button onclick="openViewAccount('<%= account.id %>')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">View</button>
-              <button onclick="toggleBanAccount(<%= account.id %>)"
+              <button onclick="toggleBanAccount('<%= account.id %>')"
                 class="<%= account.is_lock ? 'bg-blue-500 hover:bg-blue-700' : 'bg-red-500 hover:bg-yellow-700' %> text-white font-bold py-1 px-2 rounded">
                 <%= account.is_lock ? 'Unban' : 'Ban' %>
               </button>
@@ -87,7 +87,7 @@
         type="button"
         data-page="<%= accounts.currentPage - 1 %>"
         class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage(<%= accounts.currentPage - 1 %>)"
+        onclick="changeAccountPage('<%= accounts.currentPage - 1 %>')"
       >
         Trang trước
       </button>
@@ -104,7 +104,7 @@
           type="button"
           data-page="<%= i %>"
           class="page-btn rounded border py-2 px-4 hover:bg-blue-700 focus:outline-none <%= i === accounts.currentPage ? 'bg-blue-500 text-white' : 'border-blue-500 text-blue-500 hover:text-white' %>"
-          onclick="changeAccountPage(<%= i %>)"
+          onclick="changeAccountPage('<%= i %>')"
           <%= data.currentPage === i ? 'disabled' : '' %>
         >
           <%= i %>
@@ -117,7 +117,7 @@
         type="button"
         data-page="<%= accounts.currentPage + 1 %>"
         class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage(<%= accounts.currentPage + 1 %>)"
+        onclick="changeAccountPage('<%= accounts.currentPage + 1 %>')"
         >
           Trang sau
         </button>

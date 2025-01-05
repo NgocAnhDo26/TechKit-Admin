@@ -7,7 +7,7 @@ import { errorResponse } from '../components/util/util.js';
 const router = express.Router();
 
 // Use this route for RESTful API (AJAX)
-router.use(`/api`, apiRoute);
+router.use(`/api`, authorize, apiRoute);
 
 // Use this route for all SSR
 router.use('', userRoute);

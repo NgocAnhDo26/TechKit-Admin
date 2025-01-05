@@ -1,132 +1,151 @@
 <!-- Products Management Section -->
 <section id="category">
-    <h2 class="mb-4 text-2xl font-bold">Quản lý danh mục</h2>
-    <button
-      onclick="openAddCategoryModal()"
-      class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
-    >
-      Thêm danh mục
-    </button>
-  
-    <!-- Category Table -->
-    <table class="min-w-full bg-white">
-      <thead>
-        <tr class="text-sm">
-          <th class="border-b p-2 px-4">ID</th>
-          <th class="border-b p-2">Tên danh mục</th>
-        </tr>
-      </thead>
-      <tbody id="categoryTableBody">
-        <!-- Category rows will be dynamically added here -->
-        <% categories.forEach((category) => { %>
-        <tr class="text-sm" category-id="<%= category.id %>">
-          <td class="p-2 px-4 border-b text-center"><%= category.id %></td>
-          <td class="p-2 px-4 border-b text-center"><%= category.name %></td>
-          <td class="p-2 px-4 border-b flex items-center justify-center">
-            <button onclick="openEditCategoryModal(<%= category.id %>)"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
-            <button onclick="deleteCategory(<%= category.id %>)"
-                class="bg-red-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">
-                Xóa
-            </button>
-          </td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </section>
-  
-  
+  <h2 class="mb-4 text-2xl font-bold">Quản lý danh mục</h2>
+  <button
+    onclick="openAddCategoryModal()"
+    class="mb-4 rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700"
+  >
+    Thêm danh mục
+  </button>
+
+  <!-- Category Table -->
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr class="text-sm">
+        <th class="border-b p-2 px-4">ID</th>
+        <th class="border-b p-2">Tên danh mục</th>
+      </tr>
+    </thead>
+    <tbody id="categoryTableBody">
+      <!-- Category rows will be dynamically added here -->
+      <% categories.forEach((category) => { %>
+      <tr class="text-sm" category-id="<%= category.id %>">
+        <td class="p-2 px-4 border-b text-center"><%= category.id %></td>
+        <td class="p-2 px-4 border-b text-center"><%= category.name %></td>
+        <td class="p-2 px-4 border-b flex items-center justify-center">
+          <button
+            onclick="openEditCategoryModal('<%= category.id %>')"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2"
+          >
+            Edit
+          </button>
+          <button
+            onclick="deleteCategory('<%= category.id %>')"
+            class="bg-red-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded"
+          >
+            Xóa
+          </button>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</section>
+
 <!-- Add Category Modal -->
-<div id="addCategoryModal" class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
-    <div class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg">
-      <h3 class="mb-4 text-lg font-bold">Thêm danh mục mới</h3>
-      <form id="addCategoryForm" onsubmit="addCategory(event)">
-        <!-- Basic Info -->
-        <div class="mb-4">
-          <label class="mb-2 block text-sm font-bold text-gray-700" for="name">Tên Danh Mục</label>
-          <input class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none" 
-            id="category-name" type="text" placeholder="Tên Danh Mục" required />
-        </div>
-        <!-- Buttons -->
-        <div class="flex items-center justify-between">
-          <button id="addCategoryButton" class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-            type="submit">Thêm Danh Mục</button>
-          <button class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
-            type="button" onclick="closeAddCategory()">Hủy</button>
-        </div>
-      </form>
-    </div>
+<div
+  id="addCategoryModal"
+  class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
+>
+  <div
+    class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
+  >
+    <h3 class="mb-4 text-lg font-bold">Thêm danh mục mới</h3>
+    <form id="addCategoryForm" onsubmit="addCategory(event)">
+      <!-- Basic Info -->
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="name"
+          >Tên Danh Mục</label
+        >
+        <input
+          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="category-name"
+          type="text"
+          placeholder="Tên Danh Mục"
+          required
+        />
+      </div>
+      <!-- Buttons -->
+      <div class="flex items-center justify-between">
+        <button
+          id="addCategoryButton"
+          class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          type="submit"
+        >
+          Thêm Danh Mục
+        </button>
+        <button
+          class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+          type="button"
+          onclick="closeAddCategory()"
+        >
+          Hủy
+        </button>
+      </div>
+    </form>
   </div>
-  
-  
-  
- <!-- Edit Product Modal -->
-<div
-id="editCategoryModal"
-class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
->
-<div
-  class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
->
-  <h3 class="mb-4 text-lg font-bold">Chỉnh sửa danh mục</h3>
-  <form id="editCategoryForm" onsubmit="editCategory(event)">
-    <div class="mb-4">
-      <label
-        class="mb-2 block text-sm font-bold text-gray-700"
-        for="category-name-change"
-      >
-        Tên danh mục
-      </label>
-      <input
-        class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-        id="category-name-change"
-        type="text"
-        placeholder="Name"
-        required
-      /><input
-        class="hidden"
-        id="category-id-change"
-        type="text"
-      />
-    </div>
-    <div class="flex items-center justify-between">
-      <button
-        id="editCategoryButton"
-        class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-        type="submit"
-      >
-        Lưu
-      </button>
-      <button
-        id="cancelEditCategoryButton"
-        class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
-        type="button"
-        onclick="closeEditCategory()"
-      >
-        Hủy
-      </button>
-    </div>
-  </form>
-</div>
 </div>
 
-  
+<!-- Edit Product Modal -->
+<div
+  id="editCategoryModal"
+  class="fixed inset-0 hidden h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50"
+>
+  <div
+    class="relative top-20 mx-auto w-96 rounded-md border bg-white p-5 shadow-lg"
+  >
+    <h3 class="mb-4 text-lg font-bold">Chỉnh sửa danh mục</h3>
+    <form id="editCategoryForm" onsubmit="editCategory(event)">
+      <div class="mb-4">
+        <label
+          class="mb-2 block text-sm font-bold text-gray-700"
+          for="category-name-change"
+        >
+          Tên danh mục
+        </label>
+        <input
+          class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+          id="category-name-change"
+          type="text"
+          placeholder="Name"
+          required
+        /><input class="hidden" id="category-id-change" type="text" />
+      </div>
+      <div class="flex items-center justify-between">
+        <button
+          id="editCategoryButton"
+          class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          type="submit"
+        >
+          Lưu
+        </button>
+        <button
+          id="cancelEditCategoryButton"
+          class="focus:shadow-outline rounded bg-gray-500 py-2 px-4 font-bold text-white hover:bg-gray-700 focus:outline-none"
+          type="button"
+          onclick="closeEditCategory()"
+        >
+          Hủy
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
-
-async function renderCategories() {
+  async function renderCategories() {
     const response = await fetch('/api/category');
     const result = await response.json();
     // Get the categories from the response
     const categories = result.result;
 
     const tableBody = document.getElementById('categoryTableBody');
-    
+
     tableBody.innerHTML = '';
 
     // Loop through categories and create table rows
-    categories.forEach(category => {
-        const row = `
+    categories.forEach((category) => {
+      const row = `
             <tr class="text-sm" category-id="${category.id}">
                 <td class="p-2 px-4 border-b text-center">${category.id}</td>
                 <td class="p-2 px-4 border-b text-center">${category.name}</td>
@@ -140,189 +159,184 @@ async function renderCategories() {
                 </td>
             </tr>
         `;
-        // Append the row to the table body
-        tableBody.innerHTML += row;
+      // Append the row to the table body
+      tableBody.innerHTML += row;
     });
-}
+  }
 
-function openAddCategoryModal() {
+  function openAddCategoryModal() {
     document.getElementById('addCategoryModal').classList.remove('hidden');
-}
+  }
 
-function openEditCategoryModal(categoryId) {
+  function openEditCategoryModal(categoryId) {
     document.getElementById('editCategoryModal').classList.remove('hidden');
     document.getElementById('category-id-change').value = categoryId;
-}
+  }
 
-async function editCategory(event) {
-  event.preventDefault(); 
+  async function editCategory(event) {
+    event.preventDefault();
 
-  const categoryId = document.getElementById('category-id-change').value;
-  const categoryName = document.getElementById('category-name-change').value;
+    const categoryId = document.getElementById('category-id-change').value;
+    const categoryName = document.getElementById('category-name-change').value;
 
-  try {
-    // Send the updated category name to the server (via fetch or axios)
-    const response = await fetch(`/api/category/${categoryId}`, {
-      method: 'POST', // Assuming POST method is used for updating. If PUT, change accordingly.
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: categoryName }),
-    });
+    try {
+      // Send the updated category name to the server (via fetch or axios)
+      const response = await fetch(`/api/category/${categoryId}`, {
+        method: 'POST', // Assuming POST method is used for updating. If PUT, change accordingly.
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: categoryName }),
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (response.ok) {
+      if (response.ok) {
         await Swal.fire({
-            icon: 'success',
-            title: 'Sửa danh mục thành công',
-            timer: 2000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-        });
-      closeEditCategory();
-      renderCategories();
-    } else {
-        await Swal.fire({
-            icon: 'error',
-            title: 'Thất bại',
-            text: result.message,
-            timer: 2000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-        });
-    }
-  } catch (error) {
-    console.error('Error editing category:', error);
-    await Swal.fire({
-          icon: 'error',
-          title: 'Đã có lỗi xảy ra',
+          icon: 'success',
+          title: 'Sửa danh mục thành công',
           timer: 2000,
           timerProgressBar: true,
           showConfirmButton: false,
         });
+        closeEditCategory();
+        renderCategories();
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Thất bại',
+          text: result.message,
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error editing category:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Đã có lỗi xảy ra',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    }
   }
-}
 
-
-async function addCategory(event) {
+  async function addCategory(event) {
     event.preventDefault(); // Prevent default form submission
-    
+
     // Get the category name value from the input
     const categoryName = document.getElementById('category-name').value;
     if (!categoryName) {
-        alert('Vui lòng nhập tên danh mục.');
-        return;
+      alert('Vui lòng nhập tên danh mục.');
+      return;
     }
 
     try {
-        // Send a request to your backend to create a new category
-        const response = await fetch('/api/category', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: categoryName,
-            }),
-        });
+      // Send a request to your backend to create a new category
+      const response = await fetch('/api/category', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: categoryName,
+        }),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (response.ok && result.success) {
-            await Swal.fire({
-                icon: 'success',
-                title: 'Thêm danh mục thành công',
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
-            renderCategories();
-            closeAddCategory();
-        } else {
-            await Swal.fire({
-                icon: 'error',
-                title: 'Thất bại',
-                text: result.message,
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
-        }
-    } catch (error) {
-        console.error('Error adding category:', error);
+      if (response.ok && result.success) {
         await Swal.fire({
-          icon: 'error',
-          title: 'Đã có lỗi xảy ra',
+          icon: 'success',
+          title: 'Thêm danh mục thành công',
           timer: 2000,
           timerProgressBar: true,
           showConfirmButton: false,
         });
+        renderCategories();
+        closeAddCategory();
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Thất bại',
+          text: result.message,
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error adding category:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Đã có lỗi xảy ra',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
     }
-}
+  }
 
-async function deleteCategory(categoryId) {
+  async function deleteCategory(categoryId) {
     const result = await Swal.fire({
-        title: 'Xác nhận xóa',
-        text: 'Bạn có chắc chắn muốn xóa danh mục này không?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
+      title: 'Xác nhận xóa',
+      text: 'Bạn có chắc chắn muốn xóa danh mục này không?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
     });
 
     if (result.isConfirmed) {
-        try {
-            const response = await fetch(`/api/category/${categoryId}`, {
-                method: 'DELETE',
-            });
+      try {
+        const response = await fetch(`/api/category/${categoryId}`, {
+          method: 'DELETE',
+        });
 
-            if (response.ok) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    text: 'Danh mục đã được xóa.',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                });
-                renderCategories(); // Refresh the category list
-            } else {
-                const error = await response.json();
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại',
-                    text: error.message,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                });
-            }
-        } catch (error) {
-            console.error('Error deleting category:', error);
-            await Swal.fire({
-                icon: 'error',
-                title: 'Thất bại',
-                text: 'Đã xảy ra lỗi khi xóa danh mục.',
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-            });
+        if (response.ok) {
+          await Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: 'Danh mục đã được xóa.',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
+          renderCategories(); // Refresh the category list
+        } else {
+          const error = await response.json();
+          await Swal.fire({
+            icon: 'error',
+            title: 'Thất bại',
+            text: error.message,
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
         }
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Thất bại',
+          text: 'Đã xảy ra lỗi khi xóa danh mục.',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+      }
     }
-}
+  }
 
-
-
-function closeAddCategory() {
+  function closeAddCategory() {
     document.getElementById('addCategoryModal').classList.add('hidden');
-}
+  }
 
-function closeEditCategory() {
+  function closeEditCategory() {
     document.getElementById('editCategoryModal').classList.add('hidden');
-}
-  
+  }
 </script>
-  

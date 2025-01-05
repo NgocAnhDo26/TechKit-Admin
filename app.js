@@ -31,6 +31,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Change the order - move auth check before setting locals
+app.use((req, res, next) => {
+  if (!req.user && req.path !== '/' && !req.path.startsWith('/auth')) {
+    return res.redirect('/');
+  }
+  next();
+});
+
 // Set local variables to use in all view engine templates
 app.use(async (req, res, next) => {
   res.locals.isAuth = req.user ? true : false;

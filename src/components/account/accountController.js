@@ -40,7 +40,7 @@ export async function renderAccountPage(req, res) {
 router.post('/ban', async (req, res) => {
   try {
     const { account_id } = req.body;
-    console.log(account_id);
+    // console.log(account_id);
     if (!account_id) {
       return res.status(400).json({
         success: false,
@@ -48,7 +48,7 @@ router.post('/ban', async (req, res) => {
       });
     }
 
-    if (account_id === 55) {
+    if (Number(account_id) === Number(req.user.id)) {
       return res.status(403).json({
         success: false,
         message: 'Không thể thay đổi khóa của chính mình',

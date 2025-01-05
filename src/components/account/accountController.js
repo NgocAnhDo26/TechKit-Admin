@@ -14,6 +14,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:account_id', async (req, res) => {
+  try {
+    const {account_id} = req.params;
+    const result = await accountService.fetchAccountByID(account_id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).send(errorResponse(500, 'Xin lỗi, có lỗi xảy ra'));
+  }
+});
+
 export async function renderAccountPage(req, res) {
   try {
     const result = await accountService.fetchAccountsByQuery(req.query);

@@ -123,7 +123,7 @@ async function toggleBanAccountByID(account_id) {
 
         // Update the account's status
         await prisma.account.update({
-            where: { id: account_id },
+            where: { id: Number(account_id) },
             data: {
                 is_lock: newLockStatus,
             },

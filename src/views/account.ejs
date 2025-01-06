@@ -66,7 +66,7 @@
             <td class="py-2 px-4 border-b flex items-center justify-center">
               <button onclick="openViewAccount('<%= account.id %>')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">View</button>
-              <button onclick="toggleBanAccount('<%= account.id %>')"
+              <button onclick="toggleBanAccount('<%= account.id %>')" id="banButton<%= account.id %>"
                 class="<%= account.is_lock ? 'bg-blue-500 hover:bg-blue-700' : 'bg-red-500 hover:bg-yellow-700' %> text-white font-bold py-1 px-2 rounded">
                 <%= account.is_lock ? 'Unban' : 'Ban' %>
               </button>
@@ -361,7 +361,7 @@
     // Check if the request was successful
     if (result.success) {
       // Toggle the button's class and text based on the new status
-      const button = document.querySelector(`button[onclick="toggleBanAccount(${accountId})"]`);
+      const button = document.getElementById(`banButton${accountId}`);
       if (result.message === 'Account successfully banned') {
         button.classList.remove('bg-red-500', 'hover:bg-yellow-700');
         button.classList.add('bg-blue-500', 'hover:bg-blue-700');

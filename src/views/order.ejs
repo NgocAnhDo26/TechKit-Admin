@@ -218,7 +218,7 @@
       shipping: 'Đang vận chuyển',
       Shipped: 'Đã giao',
     };
-    orders.forEach((order) => {
+    orders?.forEach((order) => {
       const row = document.createElement('tr');
       // Minimal row structure
       row.innerHTML = `
@@ -324,6 +324,7 @@
     })
       .then(() => showSuccessNotification('Cập nhật trạng thái thành công!'))
       .catch((err) => showErrorNotification('Cập nhật trạng thái thất bại!'));
+    hideLoading();
   }
 
   document

@@ -37,7 +37,7 @@ export async function viewReport(date) {
   const data = await prisma.order_product.findMany({
     where: {
       orders: {
-        status: 'Giao hàng thành công',
+        status: 'shipped',
         create_time: { gte: fromDate, lte: toDate },
       },
     },

@@ -87,7 +87,7 @@
         type="button"
         data-page="<%= accounts.currentPage - 1 %>"
         class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage('<%= accounts.currentPage - 1 %>')"
+        onclick="changeAccountPage('<%= Number(accounts.currentPage) - 1 %>')"
       >
         Trang trước
       </button>
@@ -95,7 +95,7 @@
     
     <% 
       const startPage = Math.max(1, accounts.currentPage - 2);
-      const endPage = Math.min(accounts.totalPage, startPage + 4);
+      const endPage = Math.min(accounts.totalPages, startPage + 4);
     %>
 
     <!-- Render numbered page buttons -->
@@ -105,19 +105,19 @@
           data-page="<%= i %>"
           class="page-btn rounded border py-2 px-4 hover:bg-blue-700 focus:outline-none <%= i === accounts.currentPage ? 'bg-blue-500 text-white' : 'border-blue-500 text-blue-500 hover:text-white' %>"
           onclick="changeAccountPage('<%= i %>')"
-          <%= data.currentPage === i ? 'disabled' : '' %>
+          <%= accounts.currentPage === i ? 'disabled' : '' %>
         >
           <%= i %>
         </button>
     <% } %>
 
     <!-- Render the Next button only if the currentPage is less than totalPage -->
-    <% if (accounts.currentPage < accounts.totalPage) { %>
+    <% if (accounts.currentPage < accounts.totalPages) { %>
       <button
         type="button"
         data-page="<%= accounts.currentPage + 1 %>"
         class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage('<%= accounts.currentPage + 1 %>')"
+        onclick="changeAccountPage('<%= Number(accounts.currentPage) + 1 %>')"
         >
           Trang sau
         </button>
@@ -243,6 +243,7 @@
 
   async function changeAccountPage(page = 1) {
     const pageDetail = await fetchFilterAccounts(page);
+    console.log(pageDetail);
 
     // Adjust pagination
     const pagination = document.getElementById('account-pagination');
@@ -253,7 +254,7 @@
       const prev = document.createElement('button');
       prev.innerText = 'Trang trước';
       prev.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
-      prev.onclick = () => changeAccountPage(pageDetail.currentPage - 1);
+      prev.onclick = () => changeAccountPage(Number(pageDetail.currentPage) - 1);
       pagination.appendChild(prev);
     }
 
@@ -265,7 +266,8 @@
       const button = document.createElement('button');
       button.innerText = i;
       button.onclick = () => changeAccountPage(i);
-      if (i === pageDetail.currentPage) {
+      if (Number(i) === Number(pageDetail.currentPage)) {
+        console.log('page button');
         button.disabled = true;
         button.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
       } else {
@@ -274,12 +276,12 @@
       pagination.appendChild(button);
     }
 
-    // Render the Next button only if the currentPage is less than totalPage
+    // Render the Next button only if the currentPage is less than totalPages
     if (pageDetail.currentPage < pageDetail.totalPage) {
       const next = document.createElement('button');
       next.innerText = 'Trang sau';
       next.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
-      next.onclick = () => changeAccountPage(pageDetail.currentPage + 1);
+      next.onclick = () => changeAccountPage(Number(pageDetail.currentPage) + 1);
       pagination.appendChild(next);
     }
   }
@@ -326,6 +328,7 @@
   }
 
   async function fetchFilterAccounts(page) {
+    // console.log(page);
     const sort = document.getElementById('account-sort').value;
     const name = document.getElementById('account-search-name').value;
     const email = document.getElementById('account-search-email').value;
@@ -338,12 +341,15 @@
     }
     if (name) queryString.append('name', name);
     if (email) queryString.append('email', email);
+    // Add the page parameter
+    if (page) queryString.append('page', page);
     console.log(queryString.toString());
     const res = await fetch(`/api/account?${queryString.toString()}`)
     const data = await res.json();
     renderAccounts(data.accounts);
+    console.log(data.accounts);
 
-    return {currentPage: data.currentPage, totalPage: data.totalPage};
+    return {currentPage: data.currentPage, totalPage: data.totalPages};
   }
 
   async function toggleBanAccount(accountId) {

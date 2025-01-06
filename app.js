@@ -19,7 +19,7 @@ app.use(express.json()); // Parse JSON bodies
 app.use(express.static(path.join(__dirname, 'public'))); // Use static files
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }), // Store session in memory in 1 day using redis
+    store: new RedisStore({ client: redisClient, ttl: 86400 }), // Store session in memory in 1 day using redis
     secret: JSON.parse(process.env.SECRET),
     resave: false,
     saveUninitialized: false,

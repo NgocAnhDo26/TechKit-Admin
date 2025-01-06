@@ -82,46 +82,35 @@
   </table>
   <!-- Product paging (include at most 5 numbers at once) -->
   <div id="account-pagination" class="flex justify-center gap-2 mt-5 text-sm">
-    <% if (accounts.currentPage > 1) { %>
-      <button
-        type="button"
-        data-page="<%= accounts.currentPage - 1 %>"
+    <% if (accounts.currentPage> 1) { %>
+      <button type="button" data-page="<%= accounts.currentPage - 1 %>"
         class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage('<%= Number(accounts.currentPage) - 1 %>')"
-      >
+        onclick="changeAccountPage('<%= Number(accounts.currentPage) - 1 %>')">
         Trang trước
       </button>
-    <% } %>
-    
-    <% 
-      const startPage = Math.max(1, accounts.currentPage - 2);
-      const endPage = Math.min(accounts.totalPages, startPage + 4);
-    %>
+      <% } %>
 
-    <!-- Render numbered page buttons -->
-    <% for (let i = startPage; i <= endPage; i++) { %>
-        <button
-          type="button"
-          data-page="<%= i %>"
-          class="page-btn rounded border py-2 px-4 hover:bg-blue-700 focus:outline-none <%= i === accounts.currentPage ? 'bg-blue-500 text-white' : 'border-blue-500 text-blue-500 hover:text-white' %>"
-          onclick="changeAccountPage('<%= i %>')"
-          <%= accounts.currentPage === i ? 'disabled' : '' %>
-        >
-          <%= i %>
-        </button>
-    <% } %>
+        <% const startPage=Math.max(1, accounts.currentPage - 2); const endPage=Math.min(accounts.totalPages, startPage
+          + 4); %>
 
-    <!-- Render the Next button only if the currentPage is less than totalPage -->
-    <% if (accounts.currentPage < accounts.totalPages) { %>
-      <button
-        type="button"
-        data-page="<%= accounts.currentPage + 1 %>"
-        class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-        onclick="changeAccountPage('<%= Number(accounts.currentPage) + 1 %>')"
-        >
-          Trang sau
-        </button>
-    <% } %>
+          <!-- Render numbered page buttons -->
+          <% for (let i=startPage; i <=endPage; i++) { %>
+            <button type="button" data-page="<%= i %>"
+              class="page-btn rounded border py-2 px-4 hover:bg-blue-700 focus:outline-none <%= i === accounts.currentPage ? 'bg-blue-500 text-white' : 'border-blue-500 text-blue-500 hover:text-white' %>"
+              onclick="changeAccountPage('<%= i %>')" <%=accounts.currentPage===i ? 'disabled' : '' %>
+              >
+              <%= i %>
+            </button>
+            <% } %>
+
+              <!-- Render the Next button only if the currentPage is less than totalPage -->
+              <% if (accounts.currentPage < accounts.totalPages) { %>
+                <button type="button" data-page="<%= accounts.currentPage + 1 %>"
+                  class="rounded border bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
+                  onclick="changeAccountPage('<%= Number(accounts.currentPage) + 1 %>')">
+                  Trang sau
+                </button>
+                <% } %>
   </div>
 </section>
 
@@ -134,14 +123,13 @@
         <label class="mb-2 block text-sm font-bold text-gray-700" for="accountUsername">
           Ảnh Đại Diện
         </label>
-        <img id='account-detail-avatar' alt="user-avatar" src=""/>
+        <img id='account-detail-avatar' alt="user-avatar" src="" />
       </div>
       <div class="mb-4">
         <label class="mb-2 block text-sm font-bold text-gray-700" for="accountUsername">
           Username
         </label>
-        <input
-          readonly
+        <input readonly
           class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none readonly"
           id="account-detail-name" type="text" placeholder="Username" required />
       </div>
@@ -216,7 +204,7 @@
       </div>
     </form>
   </div>
-</div> 
+</div>
 
 <script>
   // // Account management
@@ -234,21 +222,23 @@
   //     role: 'user',
   //   },
   // ];
-
-  // Event listener for filter button
-  document.getElementById('account-filter-button').addEventListener('click', changeAccountPage);
-
+  
   // Event listener for sorting
-  document.getElementById('account-sort').addEventListener('change', changeAccountPage);
+  document.getElementById('account-sort').addEventListener('change', () => {
+    changeAccountPage('<%= accounts.currentPage %>'); // Start at page 1 when applying a new filter
+  });
+  document.getElementById('account-filter-button').addEventListener('click', () => {
+    changeAccountPage('<%= accounts.currentPage %>'); // Start at page 1 when applying a new filter
+  });
 
   async function changeAccountPage(page = 1) {
     const pageDetail = await fetchFilterAccounts(page);
-    console.log(pageDetail);
+    // console.log(pageDetail);
 
     // Adjust pagination
     const pagination = document.getElementById('account-pagination');
     pagination.innerHTML = '';
-  
+
     // Previous button
     if (pageDetail.currentPage > 1) {
       const prev = document.createElement('button');
@@ -267,7 +257,6 @@
       button.innerText = i;
       button.onclick = () => changeAccountPage(i);
       if (Number(i) === Number(pageDetail.currentPage)) {
-        console.log('page button');
         button.disabled = true;
         button.classList.add('rounded', 'border', 'bg-blue-500', 'py-2', 'px-4', 'text-white', 'hover:bg-blue-700', 'focus:outline-none');
       } else {
@@ -313,11 +302,10 @@
                             <button onclick="openViewAccount(${account.id})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">View</button> 
                             <button
                               onclick="toggleBanAccount(${account.id})"
-                              class="${
-                                account.is_lock === true  // Ensure strict comparison for true
-                                  ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
-                                  : 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded'
-                              }">
+                              class="${account.is_lock === true  // Ensure strict comparison for true
+          ? 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded'
+          : 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded'
+        }">
                               ${account.is_lock === true ? 'Unban' : 'Ban'}  <!-- Ensure strict comparison for true -->
                             </button>
                         </td>
@@ -332,6 +320,8 @@
     const sort = document.getElementById('account-sort').value;
     const name = document.getElementById('account-search-name').value;
     const email = document.getElementById('account-search-email').value;
+    // console.log(sort);
+    // console.log(name);
     // Build query string
     let queryString = new URLSearchParams();
     if (sort && sort !== 'default') {
@@ -349,51 +339,51 @@
     renderAccounts(data.accounts);
     console.log(data.accounts);
 
-    return {currentPage: data.currentPage, totalPage: data.totalPages};
+    return { currentPage: data.currentPage, totalPage: data.totalPages };
   }
 
   async function toggleBanAccount(accountId) {
-  try {
-    const response = await fetch('/api/account/ban', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ account_id: accountId }),
-    });
+    try {
+      const response = await fetch('/api/account/ban', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ account_id: accountId }),
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    // Check if the request was successful
-    if (result.success) {
-      // Toggle the button's class and text based on the new status
-      const button = document.getElementById(`banButton${accountId}`);
-      if (result.message === 'Account successfully banned') {
-        button.classList.remove('bg-red-500', 'hover:bg-yellow-700');
-        button.classList.add('bg-blue-500', 'hover:bg-blue-700');
-        button.innerText = 'Unban';
+      // Check if the request was successful
+      if (result.success) {
+        // Toggle the button's class and text based on the new status
+        const button = document.getElementById(`banButton${accountId}`);
+        if (result.message === 'Account successfully banned') {
+          button.classList.remove('bg-red-500', 'hover:bg-yellow-700');
+          button.classList.add('bg-blue-500', 'hover:bg-blue-700');
+          button.innerText = 'Unban';
+          await Swal.fire({
+            icon: 'success',
+            title: 'Người dùng đã bị khóa',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
+        } else if (result.message === 'Account successfully unbanned') {
+          button.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+          button.classList.add('bg-red-500', 'hover:bg-yellow-700');
+          button.innerText = 'Ban';
+          await Swal.fire({
+            icon: 'success',
+            title: 'Người dùng đã được mở khỏa',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+          });
+        }
+
+      } else {
         await Swal.fire({
-          icon: 'success',
-          title: 'Người dùng đã bị khóa',
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
-      } else if (result.message === 'Account successfully unbanned') {
-        button.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-        button.classList.add('bg-red-500', 'hover:bg-yellow-700');
-        button.innerText = 'Ban';
-        await Swal.fire({
-          icon: 'success',
-          title: 'Người dùng đã được mở khỏa',
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
-      }
-
-    } else {
-      await Swal.fire({
           icon: 'error',
           title: 'Thất bại',
           text: result.message,
@@ -401,70 +391,70 @@
           timerProgressBar: true,
           showConfirmButton: false,
         });
-    }
-  } catch (error) {
-    console.error('Error toggling account ban status:', error);
-    await Swal.fire({
-          icon: 'error',
-          title: 'Đã có lỗi xảy ra',
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
-  }
-}
-
-async function openViewAccount(accountId) {
-    try {
-        // Fetch account details using the accountId
-        const response = await fetch(`/api/account/${accountId}`);
-        const account = await response.json();
-
-        if (response.ok) {
-            // Fill in the modal with the account details
-            document.getElementById('account-detail-name').value = account.name;
-            document.getElementById('account-detail-email').value = account.email;
-            document.getElementById('account-detail-role').value = account.is_admin ? 'Admin' : 'User';
-            document.getElementById('account-detail-phone').value = account.phone;
-            document.getElementById('account-detail-address').value = account.address;
-            document.getElementById('account-detail-sex').value = account.sex;
-            document.getElementById('account-detail-avatar').src = account.avatar_url;
-            document.getElementById('account-detail-birthdate').value = new Date(account.birthdate).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            
-            const createTimeFormatted = new Date(account.create_time).toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-            }); // Format the date
-
-            const createTimeFormattedTime = new Date(account.create_time).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            }); // Format the time
-            const fullCreateTime = `${createTimeFormatted} ${createTimeFormattedTime}`;
-
-            document.getElementById('account-detail-create-time').value = `${fullCreateTime}`;
-
-            // Show the modal by removing the 'hidden' class
-            document.getElementById('ViewAccountModal').classList.remove('hidden');
-        } else {
-            // Handle error (e.g., account not found)
-            // alert('Account not found');
-        }
+      }
     } catch (error) {
-        console.error('Error fetching account details:', error);
-        // alert('Failed to fetch account details');
+      console.error('Error toggling account ban status:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Đã có lỗi xảy ra',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
     }
-}
+  }
 
-function hideModal(modalId) {
-  document.getElementById(modalId).classList.add('hidden');
-}
+  async function openViewAccount(accountId) {
+    try {
+      // Fetch account details using the accountId
+      const response = await fetch(`/api/account/${accountId}`);
+      const account = await response.json();
+
+      if (response.ok) {
+        // Fill in the modal with the account details
+        document.getElementById('account-detail-name').value = account.name;
+        document.getElementById('account-detail-email').value = account.email;
+        document.getElementById('account-detail-role').value = account.is_admin ? 'Admin' : 'User';
+        document.getElementById('account-detail-phone').value = account.phone;
+        document.getElementById('account-detail-address').value = account.address;
+        document.getElementById('account-detail-sex').value = account.sex;
+        document.getElementById('account-detail-avatar').src = account.avatar_url;
+        document.getElementById('account-detail-birthdate').value = new Date(account.birthdate).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+
+        const createTimeFormatted = new Date(account.create_time).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }); // Format the date
+
+        const createTimeFormattedTime = new Date(account.create_time).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }); // Format the time
+        const fullCreateTime = `${createTimeFormatted} ${createTimeFormattedTime}`;
+
+        document.getElementById('account-detail-create-time').value = `${fullCreateTime}`;
+
+        // Show the modal by removing the 'hidden' class
+        document.getElementById('ViewAccountModal').classList.remove('hidden');
+      } else {
+        // Handle error (e.g., account not found)
+        // alert('Account not found');
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+      // alert('Failed to fetch account details');
+    }
+  }
+
+  function hideModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+  }
   // function addAccount(event) {
   //   event.preventDefault();
   //   const username = document.getElementById('accountUsername').value;

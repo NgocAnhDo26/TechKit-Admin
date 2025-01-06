@@ -19,7 +19,7 @@ export async function createProduct(data, images) {
     status,
   } = data;
 
-  if (!name || !price || !brand || !category) {
+  if (!name || !price || !brand || !category || !images.length) {
     return {
       success: false,
       message: 'Tên, giá, thương hiệu và danh mục không được để trống',

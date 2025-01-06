@@ -664,6 +664,10 @@
 
   async function addProduct(event) {
     event.preventDefault();
+    if (!profileImage) {
+      showErrorNotification('Vui lòng chọn ảnh đại diện cho sản phẩm');
+      return;
+    }
     showLoading('Đang thêm sản phẩm...');
     const formData = new FormData();
     // Add profile image first

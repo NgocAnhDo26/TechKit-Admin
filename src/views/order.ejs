@@ -2,25 +2,38 @@
 <section id="orders" class="mt-5">
   <h2 class="mb-4 text-2xl font-bold">Đơn Hàng</h2>
   <!-- Filter by status -->
-  <form class="mb-4 text-sm">
-    <select
-      id="status-filter"
-      class="appearance-none rounded border py-2 px-3 shadow"
-    >
-      <option value="">Tất cả</option>
-      <option value="Processing">Đang xử lý</option>
-      <option value="Pending Confirmation">Chờ xác nhận</option>
-      <option value="Pending Shipment">Chờ gửi hàng</option>
-      <option value="shipping">Đang vận chuyển</option>
-      <option value="Shipped">Đã giao</option>
-    </select>
-    <button
-      type="button"
-      id="filter-button"
-      class="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-    >
-      Lọc
-    </button>
+  <form class="mb-4 text-sm flex items-center justify-between w-full">
+    <div class="flex items-center gap-2">
+      <select
+        id="status-filter"
+        class="appearance-none rounded border py-2 px-3 shadow"
+      >
+        <option value="">Tất cả</option>
+        <option value="Processing">Đang xử lý</option>
+        <option value="Pending Confirmation">Chờ xác nhận</option>
+        <option value="Pending Shipment">Chờ gửi hàng</option>
+        <option value="shipping">Đang vận chuyển</option>
+        <option value="Shipped">Đã giao</option>
+      </select>
+      <button
+        type="button"
+        id="filter-button"
+        class="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+      >
+        Lọc
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+      <span>Sắp xếp:</span>
+      <select
+        id="sort"
+        class="focus:shadow-outline appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+      >
+        <option value="">Mặc định</option>
+        <option value="desc">Ngày tạo: Mới nhất</option>
+        <option value="asc">Ngày tạo: Cũ nhất</option>
+      </select>
+    </div>
   </form>
   <!-- Orders Table -->
   <table class="min-w-full bg-white text-sm">
@@ -196,7 +209,10 @@
   async function fetchOrders(page = 1) {
     showLoading();
     const status = document.getElementById('status-filter').value;
-    const res = await fetch(`/api/order?status=${status}&page=${page}`);
+    const sort = document.getElementById('sort').value;
+    const res = await fetch(
+      `/api/order?status=${status}&page=${page}&order=${sort}`,
+    );
     const data = await res.json();
     renderOrders(data.orders);
     renderPagination(

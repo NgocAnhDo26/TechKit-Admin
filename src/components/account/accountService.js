@@ -9,7 +9,7 @@ async function fetchAccountsByQuery(query) {
         sortBy,
         sortOrder,
         page = 1,
-        pageSize = 10
+        pageSize = 5
     } = query;
 
     try {
